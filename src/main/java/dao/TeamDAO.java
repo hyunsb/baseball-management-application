@@ -58,7 +58,7 @@ public class TeamDAO {
 
     /**
      * Team 전체 목록 검색
-     * @return
+     * @return List Team
      * @throws SQLException
      */
     public List<Team> findAll() throws SQLException {
@@ -82,7 +82,7 @@ public class TeamDAO {
      * @param name
      * @throws SQLException
      */
-    public void deleteById(String name) throws SQLException {
+    public void deleteByName(String name) throws SQLException {
         String query = "DELETE FROM team WHERE name = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
