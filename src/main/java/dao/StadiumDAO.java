@@ -81,7 +81,7 @@ public class StadiumDAO {
      * @param name
      * @throws SQLException
      */
-    public void deleteById(String name) throws SQLException {
+    public void deleteByName(String name) throws SQLException {
         String query = "DELETE FROM stadium WHERE name = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {

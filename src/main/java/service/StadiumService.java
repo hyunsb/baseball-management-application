@@ -66,7 +66,7 @@ public class StadiumService {
         String name = request.getName();
 
         try {
-            stadiumDAO.deleteById(name);
+            stadiumDAO.deleteByName(name);
         } catch (SQLException exception) {
             throw new IllegalArgumentException("SQL 에러 [delete]: " + exception.getMessage());
         }
