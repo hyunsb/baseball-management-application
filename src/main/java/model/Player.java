@@ -7,15 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Builder
 public class Player {
 
-    private Long id;
-    private String name;
-    private Position position;
-    Timestamp createdAt;
-    private Long teamId;
+    private final Long id;
+    private final String name;
+    private final Position position;
+    private final Timestamp createdAt;
+    private final Long teamId;
 
     public static Player from(ResultSet resultSet) throws SQLException {
         Position position = getPosition(resultSet.getString("position"));
