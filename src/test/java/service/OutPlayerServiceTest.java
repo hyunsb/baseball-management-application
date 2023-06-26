@@ -97,10 +97,9 @@ class OutPlayerServiceTest {
         Assertions.assertThrows(FindPlayersFailureException.class, () -> outPlayerService.save(outPlayerRequest));
     }
 
-    // TODO: 2023-06-27 트랜젝션 동작 확인
     @DisplayName("퇴출 선수 등록 Transaction 테스트")
     @Test
-    void save_fail_verifying_of_transaction() {
+    void save_fail_verifying_of_transaction() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
@@ -108,18 +107,19 @@ class OutPlayerServiceTest {
                 .position(Position.valueOf("C").getValue())
                 .build();
 
-        OutPlayerDTO.NewOutPlayerRequest outPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.builder()
-                .reason(Reason.valueOf("GAMBLING").getValue())
-                .playerId(1L)
-                .build();
-
         playerService.save(playerRequest);
 
+        OutPlayerDTO.NewOutPlayerRequest outPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.builder()
+                .reason(Reason.valueOf("GAMBLING").getValue())
+                .playerId(2L)
+                .build();
+
         //when
-        //outPlayerService.save(outPlayerRequest);
+
 
         //then
-        //Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> outPlayerService.save(outPlayerRequest));
+        Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> outPlayerService.save(outPlayerRequest));
+        Assertions.assertEquals(1L, playerDao.findById(1L).get().getTeamId());
     }
 
     @DisplayName("퇴출 선수 목록")
