@@ -7,7 +7,7 @@ import dao.PlayerDAO;
 import dto.player.OutPlayerDTO;
 import lombok.RequiredArgsConstructor;
 import model.OutPlayer;
-import Exception.RollbackException;
+import Exception.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -31,7 +31,7 @@ public class OutPlayerService {
 
             connection.commit();
             return OutPlayerDTO.FindOutPlayerResponse.from(outPlayerDAO.findById(newOutPlayerRequest.getPlayerId()).orElseThrow(() -> new FindPlayersFailureException("Failed to Find Out user id: " + newOutPlayerRequest.getPlayerId())));
-        } catch (SQLException exception) {
+        } catch (SQLException | FindPlayersFailureException | PlayerUpdateFailureException exception) {
             try {
                 connection.rollback();
             } catch (SQLException rollbackException) {
