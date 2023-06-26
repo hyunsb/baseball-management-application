@@ -26,7 +26,6 @@ class PlayerServiceTest {
     void setUp() throws SQLException {
         connection.prepareStatement(Sql.PLAYER.getDrop()).execute();
         connection.prepareStatement(Sql.PLAYER.getCreate()).execute();
-        connection.close();
     }
 
     @DisplayName("선수 등록 성공")
@@ -36,7 +35,7 @@ class PlayerServiceTest {
         PlayerDTO.NewPlayerRequest playerRequest = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("나포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         //when
@@ -53,13 +52,13 @@ class PlayerServiceTest {
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("1팀포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         PlayerDTO.NewPlayerRequest playerRequest2 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(2L)
                 .name("2팀포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         //when
@@ -78,7 +77,7 @@ class PlayerServiceTest {
         PlayerDTO.NewPlayerRequest playerRequest = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("나포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         playerService.save(playerRequest);
@@ -96,13 +95,13 @@ class PlayerServiceTest {
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("나포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         PlayerDTO.NewPlayerRequest playerRequest2 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("나도포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         playerService.save(playerRequest1);
@@ -120,19 +119,19 @@ class PlayerServiceTest {
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("1팀포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         PlayerDTO.NewPlayerRequest playerRequest2 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
                 .name("1팀투수")
-                .position(Position.valueOf("P"))
+                .position(Position.valueOf("P").getValue())
                 .build();
 
         PlayerDTO.NewPlayerRequest playerRequest3 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(2L)
                 .name("2팀포수")
-                .position(Position.valueOf("C"))
+                .position(Position.valueOf("C").getValue())
                 .build();
 
         playerService.save(playerRequest1);
