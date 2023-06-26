@@ -6,6 +6,7 @@ import lombok.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 @Getter
 @Builder
@@ -24,11 +25,13 @@ public class Player {
                 .name(resultSet.getString("name"))
                 .position(position)
                 .createdAt(resultSet.getTimestamp("created_at"))
-                .teamId(resultSet.getLong("teamId"))
+                .teamId(resultSet.getLong("team_id"))
                 .build();
     }
 
     private static Position getPosition(String positionName) {
-        return Position.valueOf(positionName);
+        return Arrays.stream(Position.values())
+                .filter(value -> value.getPosition().equals(positionName))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("There is no Position like " + positionName));
     }
 }
