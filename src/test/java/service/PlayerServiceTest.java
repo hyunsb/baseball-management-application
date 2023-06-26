@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-// TODO: 2023-06-26 add h2 db for test only 
 class PlayerServiceTest {
 
     private static final Connection connection = DBConnection.getInstance();
@@ -87,9 +86,7 @@ class PlayerServiceTest {
         //when
 
         //then
-        Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> {
-            playerService.save(playerRequest);
-        });
+        Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> playerService.save(playerRequest));
     }
 
     @DisplayName("선수 등록 실패 - 중복 포지션")
@@ -113,9 +110,7 @@ class PlayerServiceTest {
         //when
 
         //then
-        Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> {
-            playerService.save(playerRequest2);
-        });
+        Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> playerService.save(playerRequest2));
     }
 
     @DisplayName("팀별 선수 목록 성공")
