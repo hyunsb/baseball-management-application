@@ -16,7 +16,7 @@ public class PlayerDTO {
 
         private final Long teamId;
         private final String name;
-        private final Position position;
+        private final String position;
     }
 
     @Getter
@@ -25,14 +25,13 @@ public class PlayerDTO {
 
         private final Long id;
         private final String name;
-        private final Position position;
+        private final String position;
 
         public static FindPlayerResponse from(Player player) {
-            Position position = player.getPosition();
             return FindPlayerResponse.builder()
                     .id(player.getId())
                     .name(player.getName())
-                    .position(position)
+                    .position(player.getPosition().getValue())
                     .build();
         }
     }

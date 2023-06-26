@@ -26,7 +26,7 @@ public class PlayerDAO {
      * @return Registered Play as Optional, Optional.empty() if error
      * @throws SQLException
      */
-    public Long registerPlayer(Long teamId, String name, Position position) throws SQLException {
+    public Long registerPlayer(Long teamId, String name, String position) throws SQLException {
 
         String insertQuery = "INSERT INTO player (team_id, name, position) VALUES (?, ?, ?)";
 
@@ -35,7 +35,7 @@ public class PlayerDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, teamId);
             preparedStatement.setString(2, name);
-            preparedStatement.setString(3, position.getPosition());
+            preparedStatement.setString(3, position);
 
             int affectedRows = preparedStatement.executeUpdate();
 
