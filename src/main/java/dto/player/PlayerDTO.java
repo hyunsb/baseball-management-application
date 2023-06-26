@@ -12,36 +12,35 @@ public class PlayerDTO {
 
     @Getter
     @Builder
-    public static class Request {
+    public static class NewPlayerRequest {
 
         private final Long teamId;
         private final String name;
         private final Position position;
+    }
 
-        public Player toEntity(){
-            return Player.builder()
-                    .teamId(teamId)
-                    .name(name)
+    @Getter
+    @Builder
+    public static class FindPlayerResponse {
+
+        private final Long id;
+        private final String name;
+        private final Position position;
+
+        public static FindPlayerResponse from(Player player) {
+            Position position = player.getPosition();
+            return FindPlayerResponse.builder()
+                    .id(player.getId())
+                    .name(player.getName())
                     .position(position)
                     .build();
         }
     }
 
     @Getter
-    @Builder
-    public static class Response {
+    @RequiredArgsConstructor
+    public static class FindPlayersByTeamRequest {
 
-        private final Long id;
-        private final String name;
-        private final Position position;
-
-        public static Response from(Player player) {
-            Position position = player.getPosition();
-            return Response.builder()
-                    .id(player.getId())
-                    .name(player.getName())
-                    .position(position)
-                    .build();
-        }
+        private final Long teamId;
     }
 }
