@@ -41,4 +41,11 @@ public class PlayerDTO {
 
         private final Long teamId;
     }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class UpdatePlayerTeamIdForOutRequest {
+
+        private final Long id;
+    }
 }
