@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import model.Player;
 import Exception.FindPlayersFailureException;
 import Exception.PlayerRegistrationFailureException;
+import Exception.PlayerUpdateFailureException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -26,9 +27,17 @@ public class PlayerService {
         }
     }
 
+    public void update(PlayerDTO.UpdatePlayerTeamIdForOutRequest updatePlayerTeamIdForOutRequest){
 
+        try {
+            playerDAO.updatePlayer(updatePlayerTeamIdForOutRequest.getId());
+        } catch (SQLException exception) {
+            throw new PlayerUpdateFailureException("Failed to Update player while executing SQL.\nCause: " + exception.getMessage());
+        }
+    }
 
     public List<PlayerDTO.FindPlayerResponse> findByTeam(PlayerDTO.FindPlayersByTeamRequest request) {
+
         try {
             List<Player> players = playerDAO.findByTeamId(request.getTeamId());
             return players.stream()
