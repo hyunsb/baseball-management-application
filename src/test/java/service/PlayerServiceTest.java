@@ -5,10 +5,7 @@ import db.DBConnection;
 import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import Exception.PlayerRegistrationFailureException;
 
 import java.sql.Connection;
@@ -24,8 +21,12 @@ class PlayerServiceTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        connection.prepareStatement(Sql.PLAYER.getDrop()).execute();
         connection.prepareStatement(Sql.PLAYER.getCreate()).execute();
+    }
+
+    @AfterEach
+    void cleanUP() throws SQLException {
+        connection.prepareStatement(Sql.PLAYER.getDrop()).execute();
     }
 
     @DisplayName("선수 등록 성공")
@@ -110,6 +111,24 @@ class PlayerServiceTest {
 
         //then
         Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> playerService.save(playerRequest2));
+    }
+
+    @DisplayName("선수 업데이트 성공")
+    @Test
+    void updatePlayer_success_test() throws SQLException {
+        //given
+        PlayerDTO.NewPlayerRequest playerRequest = PlayerDTO.NewPlayerRequest.builder()
+                .teamId(1L)
+                .name("나포수")
+                .position(Position.valueOf("C").getValue())
+                .build();
+        playerService.save(playerRequest);
+
+        //when
+        playerService.update(new PlayerDTO.UpdatePlayerTeamIdForOutRequest(1L));
+
+        //then
+        Assertions.assertNull(playerDao.findById(1L).get().getTeamId());
     }
 
     @DisplayName("팀별 선수 목록 성공")
