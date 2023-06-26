@@ -1,6 +1,5 @@
 package dto.player;
 
-import domain.Position;
 import lombok.*;
 import model.Player;
 

@@ -20,9 +20,7 @@ public class PlayerService {
 
         try {
             Long id = playerDAO.registerPlayer(playerRequest.getTeamId(), playerRequest.getName(), playerRequest.getPosition());
-            return PlayerDTO.FindPlayerResponse.from(playerDAO.findById(id).orElseThrow(() -> {
-                throw new FindPlayersFailureException("Failed to Find user id:" + id);
-            }));
+            return PlayerDTO.FindPlayerResponse.from(playerDAO.findById(id).orElseThrow(() -> new FindPlayersFailureException("Failed to Find user id:" + id)));
         } catch (SQLException exception) {
             throw new PlayerRegistrationFailureException("Failed to register player while executing SQL.\nCause: " + exception.getMessage());
         }

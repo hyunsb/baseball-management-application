@@ -1,6 +1,5 @@
 package dao;
 
-import domain.Position;
 import lombok.RequiredArgsConstructor;
 import model.Player;
 import Exception.FindPlayersFailureException;
