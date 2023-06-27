@@ -1,6 +1,6 @@
 package domain;
 
-public enum Position {
+public enum Position implements BasicEnum{
 
     P("투수"), C("포수"),
     B("1루수"), B2("2루수"), B3("3루수"), SS("유격수"),
@@ -12,7 +12,8 @@ public enum Position {
         this.position = position;
     }
 
-    public String getPosition() {
+    @Override
+    public String getValue() {
         return position;
     }
 }
