@@ -66,7 +66,7 @@ public class PlayerDAO {
 
     public void updatePlayer(Long id) throws SQLException {
 
-        String query = "UPDATE player SET team_id = NULL WHERE id = ?";
+        String query = "UPDATE player SET team_id = -1 WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, id);
