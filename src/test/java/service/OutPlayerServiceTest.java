@@ -94,7 +94,7 @@ class OutPlayerServiceTest {
         //when
 
         //then
-        Assertions.assertThrows(FindPlayersFailureException.class, () -> outPlayerService.save(outPlayerRequest));
+        Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> outPlayerService.save(outPlayerRequest));
     }
 
     @DisplayName("퇴출 선수 등록 Transaction 테스트")

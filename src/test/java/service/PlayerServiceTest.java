@@ -128,7 +128,7 @@ class PlayerServiceTest {
         playerService.update(new PlayerDTO.UpdatePlayerTeamIdForOutRequest(1L));
 
         //then
-        Assertions.assertNull(playerDao.findById(1L).get().getTeamId());
+        Assertions.assertEquals(-1, playerDao.findById(1L).get().getTeamId());
     }
 
     @DisplayName("팀별 선수 목록 성공")
