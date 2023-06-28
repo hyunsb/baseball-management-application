@@ -1,13 +1,14 @@
 package model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Builder
 public class Team {
 
     private Long id;
