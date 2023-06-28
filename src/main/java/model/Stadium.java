@@ -1,18 +1,19 @@
 package model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Builder
 public class Stadium {
 
     private Long id;
     private String name;
-    Timestamp createdAt;
+    private Timestamp createdAt;
 
     public static Stadium from(ResultSet resultSet) throws SQLException {
         return Stadium.builder()
