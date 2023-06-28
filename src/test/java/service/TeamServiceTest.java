@@ -1,7 +1,9 @@
 package service;
 
+import dao.StadiumDAO;
 import dao.TeamDAO;
 import db.DBConnection;
+import dto.stadium.StadiumRequest;
 import dto.team.TeamRequest;
 import dto.team.TeamResponse;
 import org.junit.jupiter.api.*;
@@ -11,35 +13,42 @@ import java.util.List;
 
 class TeamServiceTest {
 
-    private static final TeamService teamService;
+    private static final TeamService TEAM_SERVICE;
+    private static final StadiumService STADIUM_SERVICE;
 
     static {
         Connection connection = DBConnection.getInstance();
         TeamDAO teamDao = new TeamDAO(connection);
+        StadiumDAO stadiumDAO = new StadiumDAO(connection);
 
-        teamService = new TeamService(teamDao);
+        TEAM_SERVICE = new TeamService(teamDao, stadiumDAO);
+        STADIUM_SERVICE = new StadiumService(stadiumDAO);
     }
 
     @AfterAll
     static void afterAll() {
-        teamService.deleteAll();
+        TEAM_SERVICE.deleteAll();
+        STADIUM_SERVICE.deleteAll();
     }
 
     @BeforeEach
     void setUp() {
-        teamService.deleteAll();
+        TEAM_SERVICE.deleteAll();
+        STADIUM_SERVICE.deleteAll();
     }
 
     @DisplayName("teamService 팀 삽입 성공 테스트")
     @Test
     void save_Success_Test() {
         // Given
+        STADIUM_SERVICE.save(new StadiumRequest("Test Stadium"));
+
         String name = "test Team";
         Long stadiumId = 1L;
         TeamRequest.Create request = new TeamRequest.Create(name, stadiumId);
 
         // When
-        TeamResponse actual = teamService.save(request);
+        TeamResponse actual = TEAM_SERVICE.save(request);
 
         // Then
         Assertions.assertEquals(name, actual.getName());
@@ -53,11 +62,11 @@ class TeamServiceTest {
         String name = "test Team";
         Long stadiumId = 1L;
         TeamRequest.Create request = new TeamRequest.Create(name, stadiumId);
-        teamService.save(request);
+        TEAM_SERVICE.save(request);
 
         // When
         // Then
-        Assertions.assertThrows(IllegalArgumentException.class, () -> teamService.save(request));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TEAM_SERVICE.save(request));
     }
 
     @DisplayName("teamService 전체 팀 검색 테스트")
@@ -72,11 +81,11 @@ class TeamServiceTest {
         Long stadiumId2 = 1L;
         TeamRequest.Create request2 = new TeamRequest.Create(name2, stadiumId2);
 
-        teamService.save(request1);
-        teamService.save(request2);
+        TEAM_SERVICE.save(request1);
+        TEAM_SERVICE.save(request2);
 
         // When
-        List<TeamResponse> actual = teamService.findAll();
+        List<TeamResponse> actual = TEAM_SERVICE.findAll();
 
         // Then
         Assertions.assertEquals(2, actual.size());

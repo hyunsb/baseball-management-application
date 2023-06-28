@@ -1,9 +1,11 @@
 package service;
 
+import dao.StadiumDAO;
 import dao.TeamDAO;
 import dto.team.TeamRequest;
 import dto.team.TeamResponse;
 import lombok.RequiredArgsConstructor;
+import model.Stadium;
 import model.Team;
 
 import java.sql.SQLException;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class TeamService {
 
     private final TeamDAO teamDAO;
+    private final StadiumDAO stadiumDAO;
 
     public TeamResponse save(TeamRequest.Create request) {
         Optional<Team> result;
@@ -22,13 +25,21 @@ public class TeamService {
         Long stadiumId = request.getStadiumId();
 
         try {
+            validateStadiumId(stadiumId);
             result = teamDAO.createTeam(name, stadiumId);
-        } catch (SQLException exception) {
+
+        } catch (SQLException | IllegalArgumentException exception) {
             throw new IllegalArgumentException("SQL 에러 [insert]: " + exception.getMessage());
         }
         Team team = result.orElseThrow(() -> new IllegalArgumentException("Team save 실패"));
 
         return TeamResponse.from(team);
+    }
+
+    private void validateStadiumId(Long stadiumId) throws SQLException, IllegalArgumentException {
+        stadiumDAO.findStadiumById(stadiumId).ifPresent(stadium -> {
+            throw new IllegalArgumentException("참조하는 야구장이 존재하지 않습니다.");
+        });
     }
 
     public List<TeamResponse> findAll() {
