@@ -4,9 +4,9 @@ import dao.PlayerDAO;
 import dto.player.PlayerDTO;
 import lombok.RequiredArgsConstructor;
 import model.Player;
-import Exception.FindPlayersFailureException;
-import Exception.PlayerRegistrationFailureException;
-import Exception.PlayerUpdateFailureException;
+import exception.FindPlayersFailureException;
+import exception.PlayerRegistrationFailureException;
+import exception.PlayerUpdateFailureException;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -1,13 +1,13 @@
 package service;
 
-import Exception.FindPlayersFailureException;
-import Exception.PlayerRegistrationFailureException;
+import exception.FindPlayersFailureException;
+import exception.PlayerRegistrationFailureException;
 import dao.OutPlayerDAO;
 import dao.PlayerDAO;
 import dto.player.OutPlayerDTO;
 import lombok.RequiredArgsConstructor;
 import model.OutPlayer;
-import Exception.*;
+import exception.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;

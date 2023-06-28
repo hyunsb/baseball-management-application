@@ -1,6 +1,6 @@
 package service;
 
-import Exception.PlayerRegistrationFailureException;
+import exception.PlayerRegistrationFailureException;
 import dao.OutPlayerDAO;
 import dao.PlayerDAO;
 import db.DBConnection;
