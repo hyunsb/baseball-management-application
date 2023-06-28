@@ -1,6 +1,7 @@
 package dao;
 
 import model.Team;
+import model.TeamWithStadium;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class TeamDAO {
 
     /**
      * Team 전체 목록 검색
+     *
      * @return List Team
      * @throws SQLException
      */
@@ -74,6 +76,30 @@ public class TeamDAO {
             }
         }
         return teams;
+    }
+
+    /**
+     * Team 전체 목록과 Stadium 정보를 검색
+     *
+     * @return List TeamWithStadium
+     * @throws SQLException
+     */
+    public List<TeamWithStadium> findAllJoinStadium() throws SQLException {
+        String query = "SELECT t.id AS team_id, t.name AS team_name, t.created_at AS team_date, " +
+                "s.id AS stadium_id, s.name AS stadium_name, s.created_at AS stadium_date\n" +
+                "FROM team AS t\n" +
+                "JOIN stadium AS s ON t.stadium_id = s.id\n";
+
+        List<TeamWithStadium> teamWithStadiums = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    teamWithStadiums.add(TeamWithStadium.from(resultSet));
+                }
+            }
+        }
+        return teamWithStadiums;
     }
 
     /**
