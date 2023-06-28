@@ -35,6 +35,27 @@ public class StadiumDAO {
     }
 
     /**
+     * Stadium id로 검색
+     *
+     * @param id
+     * @return Optional Stadium
+     * @throws SQLException
+     */
+    public Optional<Stadium> findStadiumById(Long id) throws SQLException {
+        String query = "SELECT * FROM stadium WHERE id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(Stadium.from(resultSet));
+                }
+            }
+        }
+        return Optional.empty(); // not found
+    }
+
+    /**
      * Stadium 이름으로 검색
      *
      * @param name
