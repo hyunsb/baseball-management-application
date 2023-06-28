@@ -32,11 +32,11 @@ public class TeamWithStadiumResponse {
 
     @Override
     public String toString() {
-        return "TEAM_ID: " + teamId +
-                ", TEAM_NAME: " + teamName +
+        return "ID: " + teamId +
+                ", NAME: " + teamName +
                 ", 생성일자: " + teamCreatedAt +
-                " -> 야구장 정보: [ STADIUM_ID: " + stadiumId +
-                ", STADIUM_NAME: " + stadiumName +
+                " -> 야구장 정보: [ ID: " + stadiumId +
+                ", NAME: " + stadiumName +
                 ", 생성일자: " + stadiumCreatedAt + " ]";
     }
 }
