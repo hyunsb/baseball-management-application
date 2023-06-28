@@ -21,6 +21,6 @@ public class StadiumRequest {
 
     private static void validateBody(Map<String, String> body) throws BadRequestException {
         if (Objects.isNull(body)) throw new BadRequestException("요청에 필요한 데이터가 존재하지 않습니다.");
-        if (body.size() != 2 || !body.containsKey("name")) throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
+        if (body.size() != 1 || !body.containsKey("name")) throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
     }
 }
