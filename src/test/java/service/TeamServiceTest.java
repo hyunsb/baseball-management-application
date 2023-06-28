@@ -9,32 +9,35 @@ import dto.team.TeamResponse;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 class TeamServiceTest {
 
+    private static final TeamDAO TEAM_DAO;
+    private static final StadiumDAO STADIUM_DAO;
     private static final TeamService TEAM_SERVICE;
     private static final StadiumService STADIUM_SERVICE;
 
     static {
         Connection connection = DBConnection.getInstance();
-        TeamDAO teamDao = new TeamDAO(connection);
-        StadiumDAO stadiumDAO = new StadiumDAO(connection);
+        TEAM_DAO = new TeamDAO(connection);
+        STADIUM_DAO = new StadiumDAO(connection);
 
-        TEAM_SERVICE = new TeamService(teamDao, stadiumDAO);
-        STADIUM_SERVICE = new StadiumService(stadiumDAO);
+        TEAM_SERVICE = new TeamService(TEAM_DAO, STADIUM_DAO);
+        STADIUM_SERVICE = new StadiumService(STADIUM_DAO);
     }
 
     @AfterAll
-    static void afterAll() {
-        TEAM_SERVICE.deleteAll();
-        STADIUM_SERVICE.deleteAll();
+    static void afterAll() throws SQLException {
+        TEAM_DAO.deleteAll();
+        STADIUM_DAO.deleteAll();
     }
 
     @BeforeEach
-    void setUp() {
-        TEAM_SERVICE.deleteAll();
-        STADIUM_SERVICE.deleteAll();
+    void setUp() throws SQLException {
+        TEAM_DAO.deleteAll();
+        STADIUM_DAO.deleteAll();
     }
 
     @DisplayName("teamService 팀 삽입 성공 테스트")
@@ -45,7 +48,7 @@ class TeamServiceTest {
 
         String name = "test Team";
         Long stadiumId = 1L;
-        TeamRequest.Create request = new TeamRequest.Create(name, stadiumId);
+        TeamRequest request = new TeamRequest(name, stadiumId);
 
         // When
         TeamResponse actual = TEAM_SERVICE.save(request);
@@ -61,7 +64,7 @@ class TeamServiceTest {
         // Given
         String name = "test Team";
         Long stadiumId = 1L;
-        TeamRequest.Create request = new TeamRequest.Create(name, stadiumId);
+        TeamRequest request = new TeamRequest(name, stadiumId);
         TEAM_SERVICE.save(request);
 
         // When
@@ -75,11 +78,11 @@ class TeamServiceTest {
         // Given
         String name1 = "test Team1";
         Long stadiumId1 = 1L;
-        TeamRequest.Create request1 = new TeamRequest.Create(name1, stadiumId1);
+        TeamRequest request1 = new TeamRequest(name1, stadiumId1);
 
         String name2 = "test Team2";
         Long stadiumId2 = 1L;
-        TeamRequest.Create request2 = new TeamRequest.Create(name2, stadiumId2);
+        TeamRequest request2 = new TeamRequest(name2, stadiumId2);
 
         TEAM_SERVICE.save(request1);
         TEAM_SERVICE.save(request2);
