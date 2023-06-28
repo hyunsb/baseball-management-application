@@ -78,11 +78,12 @@ public class StadiumDAO {
 
     /**
      * Stadium 전체 목록 검색
+     *
      * @return
      * @throws SQLException
      */
     public List<Stadium> findAll() throws SQLException {
-        String query = "SELECT * FROM stadium";
+        String query = "SELECT * FROM stadium ORDER BY id asc";
 
         List<Stadium> stadiums = new ArrayList<>();
 
