@@ -23,7 +23,7 @@ public class StadiumResponse {
 
     @Override
     public String toString() {
-        return "ID:" + id +
+        return "ID: " + id +
                 ", NAME: " + name +
                 ", 생성일자: " + createAt;
     }
