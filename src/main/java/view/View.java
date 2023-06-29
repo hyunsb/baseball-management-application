@@ -29,12 +29,12 @@ public class View {
         }
     }
 
-    public static void printResponse(String request, final Object response) {
+    public static <T> void printResponse(String request, final T response) {
         String result = String.format(REQUEST_SUCCESS_RESULT_FORMAT, request, response);
         System.out.println(result);
     }
 
-    public static void printResponse(String request, final List<?> responses) {
+    public static <T> void printResponse(String request, final List<T> responses) {
         StringBuilder stringBuilder = new StringBuilder();
 
         if (responses.isEmpty())
