@@ -5,8 +5,8 @@ import model.Team;
 
 import java.sql.Timestamp;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Builder
 public class TeamResponse {
 
     private Long id;
@@ -21,5 +21,13 @@ public class TeamResponse {
                 .stadiumId(team.getStadiumId())
                 .createAt(team.getCreatedAt())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "ID:" + id +
+                ", NAME: " + name +
+                ", STADIUM_ID: " + stadiumId +
+                ", 생성일자: " + createAt;
     }
 }

@@ -2,8 +2,8 @@ package dao;
 
 import lombok.RequiredArgsConstructor;
 import model.Player;
-import Exception.PlayerRegistrationFailureException;
-import Exception.PlayerUpdateFailureException;
+import exception.PlayerRegistrationFailureException;
+import exception.PlayerUpdateFailureException;
 
 import java.sql.*;
 import java.util.ArrayList;

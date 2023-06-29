@@ -6,7 +6,7 @@ import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
 import org.junit.jupiter.api.*;
-import Exception.PlayerRegistrationFailureException;
+import exception.PlayerRegistrationFailureException;
 
 import java.sql.Connection;
 import java.sql.SQLException;

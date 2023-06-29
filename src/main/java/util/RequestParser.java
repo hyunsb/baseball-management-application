@@ -1,6 +1,7 @@
 package util;
 
 import domain.Request;
+import exception.BadRequestException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class RequestParser {
     private RequestParser() {
     }
 
-    public static Request parse(String request) throws IllegalArgumentException {
+    public static Request parse(String request) throws BadRequestException {
         validateRequest(request);
 
         // 쿼리스트링 형식이 아닌 경우
@@ -34,19 +35,19 @@ public class RequestParser {
         return new Request(header, body);
     }
 
-    private static void validateRequest(String request) throws IllegalArgumentException {
+    private static void validateRequest(String request) throws BadRequestException {
         if (!(REQUEST_WITH_QUERY_STRING_PATTERN.matcher(request).find()
                 || REQUEST_WITHOUT_QUERY_STRING_PATTERN.matcher(request).find()))
-            throw new IllegalArgumentException("올바르지 않은 요청값 입니다.");
+            throw new BadRequestException();
     }
 
-    private static Map<String, String> parseBody(String bodyString) {
+    private static Map<String, String> parseBody(String bodyString) throws BadRequestException{
         Map<String, String> body = new HashMap<>();
 
         String[] bodyPairs = bodyString.split("&");
         for (String bodyPair : bodyPairs) {
             String[] keyValue = bodyPair.split("=");
-            if (keyValue.length != 2) throw new IllegalArgumentException("Bad Request");
+            if (keyValue.length != 2) throw new BadRequestException();
             body.put(keyValue[0], keyValue[1]);
         }
 
