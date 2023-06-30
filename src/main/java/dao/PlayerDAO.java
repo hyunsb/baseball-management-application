@@ -125,4 +125,28 @@ public class PlayerDAO {
 
         return players;
     }
+
+    /**
+     * find Players Group By Position
+     *
+     * @return List of Players Group By position
+     * @throws SQLException
+     */
+    public List<Player> findPlayerGroupByPosition() throws SQLException {
+
+        String query = "SELECT player.*, team.name AS team_name\n" +
+                "FROM player\n" +
+                "JOIN team ON player.team_id = team.id";
+
+        List<Player> players = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                players.add(Player.from(resultSet));
+            }
+        }
+
+        return players;
+    }
 }

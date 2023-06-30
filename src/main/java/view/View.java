@@ -5,9 +5,9 @@ import exception.BadRequestException;
 import util.Console;
 import util.RequestParser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class View {
 
@@ -43,7 +43,7 @@ public class View {
         System.out.println("\n" + message + "\n");
     }
 
-    private static class ResponseDTOPrinter {
+    public static class ResponseDTOPrinter {
 
         private ResponseDTOPrinter() {
         }
@@ -61,6 +61,21 @@ public class View {
                 return;
             }
             printAsTable(responses);
+        }
+
+        public static <T> void printResponseDTOAsPivot(T response, String colmStandard, String rowStandard, String valueStandard) {
+            List<T> responses = new ArrayList<>();
+            responses.add(response);
+            printResponseDTOAsPivot(responses, colmStandard, rowStandard, valueStandard);
+        }
+
+        public static <T> void printResponseDTOAsPivot(List<T> responses, String colmStandard, String rowStandard, String valueStandard) {
+
+            if (responses == null || responses.isEmpty()) {
+                System.out.println("Empty Set");
+                return;
+            }
+            printPivotTable(responses, colmStandard, rowStandard, valueStandard);
         }
 
         private static <T> void printAsTable(List<T> valueList) {
@@ -108,7 +123,7 @@ public class View {
         /**
          * get value from responseDTO class's field using each field's getter
          *
-         * @param object     field's value of responseDTO
+         * @param object field's value of responseDTO
          * @param fieldNames List of field's name of responseDTO
          * @return each field's value of responseDTO as List
          */
@@ -129,7 +144,7 @@ public class View {
         /**
          * get each column's width
          *
-         * @param valueList  List of field's value of responseDTO
+         * @param valueList List of field's value of responseDTO
          * @param fieldNames List of field's name of responseDTO
          * @return Array of each column's width
          */
@@ -166,7 +181,7 @@ public class View {
         /**
          * Print Header
          *
-         * @param fieldNames   List of field's name of responseDTO
+         * @param fieldNames List of field's name of responseDTO
          * @param columnWidths Array of each column's width
          */
         private static void printHeader(List<String> fieldNames, int[] columnWidths) {
@@ -183,7 +198,7 @@ public class View {
         /**
          * Print Table with value
          *
-         * @param values       List of field's value of responseDTO
+         * @param values List of field's value of responseDTO
          * @param columnWidths Array of each column's width
          */
         private static void printTableRow(List<Object> values, int[] columnWidths) {
@@ -193,12 +208,9 @@ public class View {
                 space = ' ';
                 String value = values.get(i).toString();
 
-                //Check if value contains Korean characters
-                boolean containsKorean = value.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*");
-
                 int padding = Math.max(0, columnWidths[i] - value.length());
                 //if value contains korean replace space as unicode 2005 (quarter size space) to match alphabet letter width
-                if (containsKorean) {
+                if (isContainsKorean(value)) {
                     space = '\u2005';
                 }
 
@@ -210,6 +222,129 @@ public class View {
             }
 
             System.out.println(rowBuilder);
+        }
+
+        public static <T> void printPivotTable(List<T> responses, String colmStandard, String rowStandard, String valueStandard) {
+            Map<String, Map<String, String>> pivotTableData = buildPivotTableData(responses, colmStandard, rowStandard, valueStandard);
+
+            Map<String, Integer> columnWidths = calculateColumnWidths(pivotTableData, colmStandard);
+
+            StringBuilder headerRow = buildHeaderRow(columnWidths, colmStandard);
+            StringBuilder separatorRow = buildSeparatorRow(columnWidths, colmStandard);
+            StringBuilder rows = buildRows(pivotTableData, columnWidths, colmStandard);
+
+            StringBuilder pivotTable = new StringBuilder(headerRow.toString());
+            pivotTable.append("\n").append(separatorRow).append("\n").append(rows);
+            System.out.println(pivotTable);
+        }
+
+        private static <T> Map<String, Map<String, String>> buildPivotTableData(List<T> responses, String colmStandard, String rowStandard, String valueStandard) {
+            Map<String, Map<String, String>> pivotTableData = new HashMap<>();
+
+            for (T response : responses) {
+                String row = getValue(response, rowStandard);
+                String column = getValue(response, colmStandard);
+                String value = getValue(response, valueStandard);
+
+                pivotTableData.putIfAbsent(row, new HashMap<>());
+                pivotTableData.get(row).put(column, value);
+            }
+
+            return pivotTableData;
+        }
+
+        private static <T> String getValue(T object, String fieldName) {
+            try {
+                Method getterMethod = object.getClass().getMethod("get" + capitalize(fieldName));
+                Object value = getterMethod.invoke(object);
+                return value != null ? value.toString() : "";
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        private static String capitalize(String str) {
+            if (str == null || str.isEmpty()) {
+                return str;
+            }
+            return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+        }
+
+        private static Map<String, Integer> calculateColumnWidths(Map<String, Map<String, String>> pivotTableData, String colmStandard) {
+            Map<String, Integer> columnWidths = new HashMap<>();
+            columnWidths.put(colmStandard, colmStandard.length());
+
+            for (Map<String, String> column : pivotTableData.values()) {
+                for (Map.Entry<String, String> entry : column.entrySet()) {
+                    String columnName = entry.getKey();
+                    String valueName = entry.getValue();
+
+                    int columnNameLength = columnName.length();
+                    int valueNameLength = valueName != null ? valueName.length() : 0;
+
+                    int width = Math.max(columnWidths.getOrDefault(columnName, 0), valueNameLength);
+                    columnWidths.put(columnName, width);
+                    columnWidths.put(colmStandard, Math.max(columnWidths.get(colmStandard), columnNameLength));
+                }
+            }
+
+            return columnWidths;
+        }
+
+        private static StringBuilder buildHeaderRow(Map<String, Integer> columnWidths, String colmStandard) {
+            StringBuilder headerRow = new StringBuilder(formatCell(colmStandard, columnWidths.get(colmStandard)));
+            for (String columnName : columnWidths.keySet()) {
+                if (!columnName.equals(colmStandard)) {
+                    headerRow.append(" | ").append(formatCell(columnName, columnWidths.get(columnName)));
+                }
+            }
+            return headerRow;
+        }
+
+        private static StringBuilder buildSeparatorRow(Map<String, Integer> columnWidths, String colmStandard) {
+            StringBuilder separatorRow = new StringBuilder();
+            separatorRow.append("-".repeat(columnWidths.get(colmStandard)));
+            for (String columnName : columnWidths.keySet()) {
+                if (!columnName.equals(colmStandard)) {
+                    separatorRow.append("-".repeat(columnWidths.get(columnName)+3));
+                }
+            }
+            return separatorRow;
+        }
+
+        private static StringBuilder buildRows(Map<String, Map<String, String>> pivotTableData, Map<String, Integer> columnWidths, String colmStandard) {
+            StringBuilder rows = new StringBuilder();
+            for (String rowName : pivotTableData.keySet()) {
+                StringBuilder row = new StringBuilder(formatCell(rowName, columnWidths.get(colmStandard)));
+                Map<String, String> column = pivotTableData.get(rowName);
+
+                for (String columnName : columnWidths.keySet()) {
+                    if (!columnName.equals(colmStandard)) {
+                        String valueName = column.getOrDefault(columnName, "  ");
+                        row.append("   ").append(formatCell(valueName, columnWidths.get(columnName)));
+                    }
+                }
+
+                rows.append(row).append("\n");
+            }
+            return rows;
+        }
+
+        private static String formatCell(String value, int width) {
+            StringBuilder formattedValue = new StringBuilder(value);
+            int padding = width - value.length();
+            if (isContainsKorean(value)) {
+                padding *= 0.7;
+            }
+
+            formattedValue.append(" ".repeat(Math.max(0, padding)));
+
+            return formattedValue.toString();
+        }
+
+        private static boolean isContainsKorean(String value) {
+            return value.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*");
         }
     }
 }

@@ -48,4 +48,16 @@ public class PlayerService {
         }
     }
 
+    public List<PlayerDTO.FindPlayerGroupByPositionResponse> findPlayerGroupByPosition() {
+
+        try {
+            List<Player> players = playerDAO.findPlayerGroupByPosition();
+            return players.stream()
+                    .map(PlayerDTO.FindPlayerGroupByPositionResponse::from)
+                    .collect(Collectors.toList());
+        } catch (SQLException exception) {
+            throw new FindPlayersFailureException("Failed to Find players Group By Position While execute sql\nCause: " + exception.getMessage());
+        }
+    }
+
 }
