@@ -36,6 +36,23 @@ public class PlayerDTO {
     }
 
     @Getter
+    @Builder
+    public static class FindPlayerGroupByPositionResponse {
+
+        private final String name;
+        private final String position;
+        private final String teamName;
+
+        public static FindPlayerGroupByPositionResponse from(Player player) {
+            return FindPlayerGroupByPositionResponse.builder()
+                    .name(player.getName())
+                    .position(player.getPosition().getValue())
+                    .teamName(player.getTeamName())
+                    .build();
+        }
+    }
+
+    @Getter
     @RequiredArgsConstructor
     public static class FindPlayersByTeamRequest {
 
