@@ -1,12 +1,14 @@
 package service;
 
 import dao.PlayerDAO;
+import dao.StadiumDAO;
 import dao.TeamDAO;
 import db.DBConnection;
 import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
 import dto.team.TeamRequest;
+import model.Team;
 import org.junit.jupiter.api.*;
 import exception.PlayerRegistrationFailureException;
 import util.ResponseDTOPrinter;
@@ -23,7 +25,8 @@ class PlayerServiceTest {
     private static final PlayerService playerService = new PlayerService(playerDao);
 
     private static final TeamDAO teamDAO = new TeamDAO(connection);
-    private static final TeamService teamService = new TeamService(teamDAO);
+    private static final StadiumDAO stadiumDAO = new StadiumDAO(connection);
+    private static final TeamService teamService = new TeamService(teamDAO, stadiumDAO);
 
     @BeforeEach
     void setUp() throws SQLException {
@@ -41,11 +44,7 @@ class PlayerServiceTest {
     @Test
     void save_success_test() {
         //given
-        PlayerDTO.NewPlayerRequest playerRequest = PlayerDTO.NewPlayerRequest.builder()
-                .teamId(1L)
-                .name("나포수")
-                .position(Position.valueOf("C").getValue())
-                .build();
+        PlayerDTO.NewPlayerRequest playerRequest = new PlayerDTO.NewPlayerRequest(1L, "나포수", Position.valueOf("C").getValue());
 
         //when
         PlayerDTO.FindPlayerResponse findPlayerResponse = playerService.save(playerRequest);
@@ -58,17 +57,9 @@ class PlayerServiceTest {
     @Test
     void save_success_test_differentTeam_same_position() {
         //given
-        PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
-                .teamId(1L)
-                .name("1팀포수")
-                .position(Position.valueOf("C").getValue())
-                .build();
+        PlayerDTO.NewPlayerRequest playerRequest1 = new PlayerDTO.NewPlayerRequest(1L, "1팀포수", Position.valueOf("C").getValue());
+        PlayerDTO.NewPlayerRequest playerRequest2 = new PlayerDTO.NewPlayerRequest(2L, "2팀포수", Position.valueOf("C").getValue());
 
-        PlayerDTO.NewPlayerRequest playerRequest2 = PlayerDTO.NewPlayerRequest.builder()
-                .teamId(2L)
-                .name("2팀포수")
-                .position(Position.valueOf("C").getValue())
-                .build();
 
         //when
         PlayerDTO.FindPlayerResponse findPlayerResponse1 = playerService.save(playerRequest1);
@@ -207,8 +198,8 @@ class PlayerServiceTest {
         playerService.save(playerRequest2);
         playerService.save(playerRequest3);
 
-        TeamRequest.Create teamRequest1 = new TeamRequest.Create("TeamA", 1L);
-        TeamRequest.Create teamRequest2 = new TeamRequest.Create("TeamB", 2L);
+        TeamRequest teamRequest1 = new TeamRequest("TeamA", 1L);
+        TeamRequest teamRequest2 = new TeamRequest("TeamB", 2L);
 
         teamService.save(teamRequest1);
         teamService.save(teamRequest2);
