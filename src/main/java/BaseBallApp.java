@@ -69,7 +69,7 @@ public class BaseBallApp {
         try {
             StadiumRequest stadiumRequest = StadiumRequest.from(request);
             StadiumResponse response = STADIUM_SERVICE.save(stadiumRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (StadiumRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -82,7 +82,7 @@ public class BaseBallApp {
             if (!Objects.isNull(request.getBody())) throw new BadRequestException();
 
             List<StadiumResponse> allStadiums = STADIUM_SERVICE.findAll();
-            View.printResponse(request.getHeader(), allStadiums);
+            View.printResponse(allStadiums);
 
         } catch (StadiumFindFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -94,7 +94,7 @@ public class BaseBallApp {
         try {
             TeamRequest teamRequest = TeamRequest.from(request);
             TeamResponse response = TEAM_SERVICE.save(teamRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (TeamRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -106,7 +106,7 @@ public class BaseBallApp {
         try {
             if (!Objects.isNull(request.getBody())) throw new BadRequestException();
             List<TeamWithStadiumResponse> allTeamWithStadium = TEAM_SERVICE.findAllWithStadium();
-            View.printResponse(request.getHeader(), allTeamWithStadium);
+            View.printResponse(allTeamWithStadium);
 
         } catch (TeamFindFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
