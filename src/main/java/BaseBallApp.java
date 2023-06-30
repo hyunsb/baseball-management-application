@@ -1,14 +1,20 @@
 import annotation.RequestMapping;
+import dao.OutPlayerDAO;
+import dao.PlayerDAO;
 import dao.StadiumDAO;
 import dao.TeamDAO;
 import db.DBConnection;
 import domain.Request;
+import dto.player.OutPlayerDTO;
+import dto.player.PlayerDTO;
 import dto.stadium.StadiumRequest;
 import dto.stadium.StadiumResponse;
 import dto.team.TeamRequest;
 import dto.team.TeamResponse;
 import dto.team.TeamWithStadiumResponse;
 import exception.*;
+import service.OutPlayerService;
+import service.PlayerService;
 import service.StadiumService;
 import service.TeamService;
 import view.View;
@@ -23,6 +29,8 @@ public class BaseBallApp {
 
     private static final StadiumService STADIUM_SERVICE;
     private static final TeamService TEAM_SERVICE;
+    private static final PlayerService PLAYER_SERVICE;
+    private static final OutPlayerService OUT_PLAYER_SERVICE;
 
     // inject dependency
     static {
@@ -30,9 +38,13 @@ public class BaseBallApp {
 
         StadiumDAO stadiumDAO = new StadiumDAO(connection);
         TeamDAO teamDAO = new TeamDAO(connection);
+        PlayerDAO playerDAO = new PlayerDAO(connection);
+        OutPlayerDAO outPlayerDAO = new OutPlayerDAO(connection);
 
         STADIUM_SERVICE = new StadiumService(stadiumDAO);
         TEAM_SERVICE = new TeamService(teamDAO, stadiumDAO);
+        PLAYER_SERVICE = new PlayerService(playerDAO);
+        OUT_PLAYER_SERVICE = new OutPlayerService(outPlayerDAO, playerDAO, connection);
     }
 
     public static void main(String[] args) {
@@ -109,6 +121,64 @@ public class BaseBallApp {
             View.printResponse(request.getHeader(), allTeamWithStadium);
 
         } catch (TeamFindFailureException | BadRequestException exception) {
+            View.printErrorMessage(exception.getMessage());
+        }
+    }
+
+    @RequestMapping(request = "선수목록")
+    private static void viewPlayersByTeam(final Request request) {
+        try {
+            PlayerDTO.FindPlayersByTeamRequest findPlayersByTeamRequest = PlayerDTO.FindPlayersByTeamRequest.from(request);
+            List<PlayerDTO.FindPlayerResponse> response = PLAYER_SERVICE.findByTeam(findPlayersByTeamRequest);
+            View.printResponse(request.getHeader(), response);
+
+        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
+            View.printErrorMessage(exception.getMessage());
+        }
+    }
+
+    @RequestMapping(request = "퇴출목록")
+    private static void viewOutPlayers(final Request request) {
+        try {
+            List<OutPlayerDTO.FindOutPlayerResponse> response = OUT_PLAYER_SERVICE.findOutPlayers();
+            View.printResponse(request.getHeader(), response);
+
+        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
+            View.printErrorMessage(exception.getMessage());
+        }
+    }
+
+    @RequestMapping(request = "포지션별목록")
+    private static void viewPlayersGroupByPosition(final Request request) {
+        try {
+            List<PlayerDTO.FindPlayerGroupByPositionResponse> response = PLAYER_SERVICE.findPlayerGroupByPosition();
+            View.printResponse(request.getHeader(), response);
+
+        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
+            View.printErrorMessage(exception.getMessage());
+        }
+    }
+
+    @RequestMapping(request = "선수등록")
+    private static void savePlayer(final Request request) {
+        try {
+            PlayerDTO.NewPlayerRequest newPlayerRequest = PlayerDTO.NewPlayerRequest.from(request);
+            PlayerDTO.FindPlayerResponse response = PLAYER_SERVICE.save(newPlayerRequest);
+            View.printResponse(request.getHeader(), response);
+
+        } catch (TeamRegistrationFailureException | BadRequestException exception) {
+            View.printErrorMessage(exception.getMessage());
+        }
+    }
+
+    @RequestMapping(request = "퇴출등록")
+    private static void saveOutPlayer(final Request request) {
+        try {
+            OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.from(request);
+            OutPlayerDTO.FindOutPlayerResponse response = OUT_PLAYER_SERVICE.save(newOutPlayerRequest);
+            View.printResponse(request.getHeader(), response);
+
+        } catch (TeamRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
         }
     }
