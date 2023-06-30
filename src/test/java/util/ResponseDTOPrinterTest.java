@@ -1,13 +1,21 @@
 package util;
 
+import dao.OutPlayerDAO;
+import dao.PlayerDAO;
+
+import db.DBConnection;
 import domain.Position;
+import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
 import dto.team.TeamResponse;
 import model.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import service.OutPlayerService;
+
 import view.View;
 
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -72,6 +80,20 @@ class ResponseDTOPrinterTest {
 
         //then
         //check console
+    }
+
+    @DisplayName("퇴출목록 print")
+    @Test
+    public void printOutPlayers() {
+        Connection connection = DBConnection.getInstance();
+
+        PlayerDAO playerDAO = new PlayerDAO(connection);
+        OutPlayerDAO outPlayerDAO = new OutPlayerDAO(connection);
+
+        OutPlayerService outPlayerService = new OutPlayerService(outPlayerDAO, playerDAO, connection);
+        List<OutPlayerDTO.FindOutPlayerResponse> responses = outPlayerService.findOutPlayers();
+        View.printResponse(responses);
+
     }
 
     @DisplayName("Pivot table print test")

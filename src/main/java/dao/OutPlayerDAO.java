@@ -76,9 +76,16 @@ public class OutPlayerDAO {
      */
     public List<OutPlayer> findOutPlayers() throws SQLException {
 
-        String query = "SELECT p.id AS id, p.name AS name, p.position AS position, op.reason AS out_reason, op.created_at AS out_date\n" +
-                "FROM out_player op\n" +
-                "JOIN player p ON op.player_id = p.id;";
+        String query = "SELECT\n" +
+                "    p.id AS id,\n" +
+                "    p.name AS name,\n" +
+                "    p.position AS position,\n" +
+                "    op.reason AS out_reason,\n" +
+                "    op.created_at AS out_date\n" +
+                "FROM\n" +
+                "    player p\n" +
+                "LEFT JOIN\n" +
+                "    out_player op ON p.id = op.player_id;\n";
 
         List<OutPlayer> players = new ArrayList<>();
 

@@ -5,6 +5,7 @@ import exception.BadRequestException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import model.OutPlayer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -69,17 +70,28 @@ public class OutPlayerDTO {
         private final Long playerId;
         private final String name;
         private final String position;
-        private final String reason;
-        private final Timestamp outDay;
+        @Setter
+        private String reason;
+        @Setter
+        private Timestamp outDay;
 
         public static FindOutPlayerResponse from(OutPlayer outPlayer) {
-            return FindOutPlayerResponse.builder()
+            FindOutPlayerResponseBuilder findOutPlayerResponseBuilder = FindOutPlayerResponse.builder()
                     .playerId(outPlayer.getPlayerId())
                     .name(outPlayer.getName())
-                    .position(outPlayer.getPosition().getValue())
-                    .reason(outPlayer.getReason().getValue())
-                    .outDay(outPlayer.getOutDay())
-                    .build();
+                    .position(outPlayer.getPosition().getValue());
+
+            try {
+                if (outPlayer.getReason().getValue() != null) {
+                    findOutPlayerResponseBuilder
+                            .reason(outPlayer.getReason().getValue())
+                            .outDay(outPlayer.getOutDay());
+                }
+
+            } catch (Exception exception) {
+
+            }
+            return findOutPlayerResponseBuilder.build();
         }
     }
 }
