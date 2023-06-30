@@ -6,10 +6,7 @@ import model.Stadium;
 import java.sql.Timestamp;
 
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class StadiumResponse {
 
     private Long id;
@@ -22,5 +19,12 @@ public class StadiumResponse {
                 .name(stadium.getName())
                 .createAt(stadium.getCreatedAt())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                ", NAME: " + name +
+                ", 생성일자: " + createAt;
     }
 }
