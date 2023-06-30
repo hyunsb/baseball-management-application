@@ -52,7 +52,9 @@ public class BaseBallApp {
             try {
                 Request request = View.inputRequest();
                 mappingRequest(request);
-            } catch (IllegalAccessException | InvocationTargetException | BadRequestException exception) {
+            } catch (BadRequestException | ServiceFailureException | RollbackException exception) {
+                View.printErrorMessage(exception.getMessage());
+            } catch (IllegalAccessException | InvocationTargetException exception) {
                 View.printErrorMessage(exception.getCause().toString());
             }
         }
@@ -77,109 +79,83 @@ public class BaseBallApp {
     }
 
     @RequestMapping(request = "야구장등록")
-    private static void saveStadium(final Request request) {
-        try {
-            StadiumRequest stadiumRequest = StadiumRequest.from(request);
-            StadiumResponse response = STADIUM_SERVICE.save(stadiumRequest);
-            View.printResponse(response);
+    private static void saveStadium(final Request request)
+            throws BadRequestException, StadiumRegistrationFailureException {
 
-        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        StadiumRequest stadiumRequest = StadiumRequest.from(request);
+        StadiumResponse response = STADIUM_SERVICE.save(stadiumRequest);
+        View.printResponse(response);
     }
 
     @RequestMapping(request = "야구장목록")
-    private static void viewAllStadiums(final Request request) {
-        try {
-            if (!Objects.isNull(request.getBody())) throw new BadRequestException();
+    private static void viewAllStadiums(final Request request)
+            throws BadRequestException, StadiumFindFailureException {
 
-            List<StadiumResponse> allStadiums = STADIUM_SERVICE.findAll();
-            View.printResponse(allStadiums);
+        if (!Objects.isNull(request.getBody())) throw new BadRequestException();
 
-        } catch (StadiumFindFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        List<StadiumResponse> allStadiums = STADIUM_SERVICE.findAll();
+        View.printResponse(allStadiums);
     }
 
     @RequestMapping(request = "팀등록")
-    private static void saveTeam(final Request request) {
-        try {
-            TeamRequest teamRequest = TeamRequest.from(request);
-            TeamResponse response = TEAM_SERVICE.save(teamRequest);
-            View.printResponse(response);
+    private static void saveTeam(final Request request)
+            throws BadRequestException, TeamRegistrationFailureException {
 
-        } catch (TeamRegistrationFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        TeamRequest teamRequest = TeamRequest.from(request);
+        TeamResponse response = TEAM_SERVICE.save(teamRequest);
+        View.printResponse(response);
     }
 
     @RequestMapping(request = "팀목록")
-    private static void viewAllTeams(final Request request) {
-        try {
-            if (!Objects.isNull(request.getBody())) throw new BadRequestException();
-            List<TeamWithStadiumResponse> allTeamWithStadium = TEAM_SERVICE.findAllWithStadium();
-            View.printResponse(allTeamWithStadium);
+    private static void viewAllTeams(final Request request)
+            throws BadRequestException, TeamFindFailureException {
 
-        } catch (TeamFindFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        if (!Objects.isNull(request.getBody())) throw new BadRequestException();
+        List<TeamWithStadiumResponse> allTeamWithStadium = TEAM_SERVICE.findAllWithStadium();
+        View.printResponse(allTeamWithStadium);
     }
 
     @RequestMapping(request = "선수목록")
-    private static void viewPlayersByTeam(final Request request) {
-        try {
-            PlayerDTO.FindPlayersByTeamRequest findPlayersByTeamRequest = PlayerDTO.FindPlayersByTeamRequest.from(request);
-            List<PlayerDTO.FindPlayerResponse> response = PLAYER_SERVICE.findByTeam(findPlayersByTeamRequest);
-            View.printResponse(response);
+    private static void viewPlayersByTeam(final Request request)
+            throws BadRequestException, FindPlayersFailureException {
 
-        } catch (FindPlayersFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        PlayerDTO.FindPlayersByTeamRequest findPlayersByTeamRequest = PlayerDTO.FindPlayersByTeamRequest.from(request);
+        List<PlayerDTO.FindPlayerResponse> response = PLAYER_SERVICE.findByTeam(findPlayersByTeamRequest);
+        View.printResponse(response);
+
     }
 
     @RequestMapping(request = "퇴출목록")
-    private static void viewOutPlayers(final Request request) {
-        try {
-            List<OutPlayerDTO.FindOutPlayerResponse> response = OUT_PLAYER_SERVICE.findOutPlayers();
-            View.printResponse(response);
+    private static void viewOutPlayers(final Request request)
+            throws BadRequestException, FindPlayersFailureException {
 
-        } catch (FindPlayersFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        List<OutPlayerDTO.FindOutPlayerResponse> response = OUT_PLAYER_SERVICE.findOutPlayers();
+        View.printResponse(response);
     }
 
     @RequestMapping(request = "포지션별목록")
-    private static void viewPlayersGroupByPosition(final Request request) {
-        try {
-            List<PlayerDTO.FindPlayerGroupByPositionResponse> response = PLAYER_SERVICE.findPlayerGroupByPosition();
-            View.printResponseAsPivot(response, "teamName", "position", "name");
+    private static void viewPlayersGroupByPosition(final Request request)
+            throws BadRequestException, FindPlayersFailureException {
 
-        } catch (FindPlayersFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        List<PlayerDTO.FindPlayerGroupByPositionResponse> response = PLAYER_SERVICE.findPlayerGroupByPosition();
+        View.printResponseAsPivot(response, "teamName", "position", "name");
     }
 
     @RequestMapping(request = "선수등록")
-    private static void savePlayer(final Request request) {
-        try {
-            PlayerDTO.NewPlayerRequest newPlayerRequest = PlayerDTO.NewPlayerRequest.from(request);
-            PlayerDTO.FindPlayerResponse response = PLAYER_SERVICE.save(newPlayerRequest);
-            View.printResponse(response);
+    private static void savePlayer(final Request request)
+            throws BadRequestException, PlayerRegistrationFailureException {
 
-        } catch (PlayerRegistrationFailureException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        PlayerDTO.NewPlayerRequest newPlayerRequest = PlayerDTO.NewPlayerRequest.from(request);
+        PlayerDTO.FindPlayerResponse response = PLAYER_SERVICE.save(newPlayerRequest);
+        View.printResponse(response);
     }
 
     @RequestMapping(request = "퇴출등록")
-    private static void saveOutPlayer(final Request request) {
-        try {
-            OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.from(request);
-            OutPlayerDTO.FindOutPlayerResponse response = OUT_PLAYER_SERVICE.save(newOutPlayerRequest);
-            View.printResponse(response);
+    private static void saveOutPlayer(final Request request)
+            throws BadRequestException, RollbackException, PlayerRegistrationFailureException {
 
-        } catch (PlayerRegistrationFailureException | RollbackException | BadRequestException exception) {
-            View.printErrorMessage(exception.getMessage());
-        }
+        OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.from(request);
+        OutPlayerDTO.FindOutPlayerResponse response = OUT_PLAYER_SERVICE.save(newOutPlayerRequest);
+        View.printResponse(response);
     }
 }
