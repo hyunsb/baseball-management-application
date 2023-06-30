@@ -152,7 +152,7 @@ public class BaseBallApp {
     private static void viewPlayersGroupByPosition(final Request request) {
         try {
             List<PlayerDTO.FindPlayerGroupByPositionResponse> response = PLAYER_SERVICE.findPlayerGroupByPosition();
-            View.printResponse(response);
+            View.printResponseAsPivot(response, "teamName", "position", "name");
 
         } catch (StadiumRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
