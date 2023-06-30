@@ -299,10 +299,7 @@ public class ResponseDTOPrinter {
             padding *= 0.7;
         }
 
-
-        for (int i = 0; i < padding; i++) {
-            formattedValue.append(" ");
-        }
+        formattedValue.append(" ".repeat(Math.max(0, padding)));
 
         return formattedValue.toString();
     }
