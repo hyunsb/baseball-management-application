@@ -21,7 +21,7 @@ public class OutPlayerService {
     private final PlayerDAO playerDAO;
     private final Connection connection;
 
-    public OutPlayerDTO.FindOutPlayerResponse save(OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest) {
+    public OutPlayerDTO.FindOutPlayerResponse save(OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest) throws RollbackException, PlayerRegistrationFailureException {
 
         try {
             connection.setAutoCommit(false);
@@ -37,7 +37,7 @@ public class OutPlayerService {
             } catch (SQLException rollbackException) {
                 throw new RollbackException(rollbackException.getMessage());
             }
-            throw new PlayerRegistrationFailureException("Failed to register out player while executing SQL.\nCause: " + exception.getMessage());
+            throw new PlayerRegistrationFailureException("퇴출 선수 등록에 실패하였습니다");
         }
         finally {
             try {
@@ -50,14 +50,14 @@ public class OutPlayerService {
 
 
 
-    public List<OutPlayerDTO.FindOutPlayerResponse> findOutPlayers() {
+    public List<OutPlayerDTO.FindOutPlayerResponse> findOutPlayers() throws FindPlayersFailureException {
         try {
             List<OutPlayer> outPlayers = outPlayerDAO.findOutPlayers();
             return outPlayers.stream()
                     .map(OutPlayerDTO.FindOutPlayerResponse::from)
                     .collect(Collectors.toList());
         } catch (SQLException exception) {
-            throw new FindPlayersFailureException("Failed to Find out players While execute sql\nCause: " + exception.getMessage());
+            throw new FindPlayersFailureException("선수 등록에 실패 하였습니다.");
         }
     }
 
