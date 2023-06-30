@@ -132,7 +132,7 @@ public class BaseBallApp {
             List<PlayerDTO.FindPlayerResponse> response = PLAYER_SERVICE.findByTeam(findPlayersByTeamRequest);
             View.printResponse(response);
 
-        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
+        } catch (FindPlayersFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
         }
     }
@@ -143,7 +143,7 @@ public class BaseBallApp {
             List<OutPlayerDTO.FindOutPlayerResponse> response = OUT_PLAYER_SERVICE.findOutPlayers();
             View.printResponse(response);
 
-        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
+        } catch (FindPlayersFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
         }
     }
@@ -154,7 +154,7 @@ public class BaseBallApp {
             List<PlayerDTO.FindPlayerGroupByPositionResponse> response = PLAYER_SERVICE.findPlayerGroupByPosition();
             View.printResponseAsPivot(response, "teamName", "position", "name");
 
-        } catch (StadiumRegistrationFailureException | BadRequestException exception) {
+        } catch (FindPlayersFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
         }
     }
@@ -166,7 +166,7 @@ public class BaseBallApp {
             PlayerDTO.FindPlayerResponse response = PLAYER_SERVICE.save(newPlayerRequest);
             View.printResponse(response);
 
-        } catch (TeamRegistrationFailureException | BadRequestException exception) {
+        } catch (PlayerRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
         }
     }
@@ -178,7 +178,7 @@ public class BaseBallApp {
             OutPlayerDTO.FindOutPlayerResponse response = OUT_PLAYER_SERVICE.save(newOutPlayerRequest);
             View.printResponse(response);
 
-        } catch (TeamRegistrationFailureException | BadRequestException exception) {
+        } catch (PlayerRegistrationFailureException | RollbackException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
         }
     }
