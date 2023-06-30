@@ -17,26 +17,26 @@ public class PlayerService {
 
     private final PlayerDAO playerDAO;
 
-    public PlayerDTO.FindPlayerResponse save(PlayerDTO.NewPlayerRequest playerRequest) {
+    public PlayerDTO.FindPlayerResponse save(PlayerDTO.NewPlayerRequest playerRequest) throws PlayerRegistrationFailureException {
 
         try {
             Long id = playerDAO.registerPlayer(playerRequest.getTeamId(), playerRequest.getName(), playerRequest.getPosition());
-            return PlayerDTO.FindPlayerResponse.from(playerDAO.findById(id).orElseThrow(() -> new FindPlayersFailureException("Failed to Find user id:" + id)));
+            return PlayerDTO.FindPlayerResponse.from(playerDAO.findById(id).orElseThrow(() -> new FindPlayersFailureException("해당 선수를 찾을 수 없습니다")));
         } catch (SQLException exception) {
-            throw new PlayerRegistrationFailureException("Failed to register player while executing SQL.\nCause: " + exception.getMessage());
+            throw new PlayerRegistrationFailureException("선수 등록에 실패 하였습니다.");
         }
     }
 
-    public void update(PlayerDTO.UpdatePlayerTeamIdForOutRequest updatePlayerTeamIdForOutRequest){
+    public void update(PlayerDTO.UpdatePlayerTeamIdForOutRequest updatePlayerTeamIdForOutRequest) throws PlayerUpdateFailureException {
 
         try {
             playerDAO.updatePlayer(updatePlayerTeamIdForOutRequest.getId());
         } catch (SQLException exception) {
-            throw new PlayerUpdateFailureException("Failed to Update player while executing SQL.\nCause: " + exception.getMessage());
+            throw new PlayerUpdateFailureException("선수 정보 변경을 실패 하였습니다.");
         }
     }
 
-    public List<PlayerDTO.FindPlayerResponse> findByTeam(PlayerDTO.FindPlayersByTeamRequest request) {
+    public List<PlayerDTO.FindPlayerResponse> findByTeam(PlayerDTO.FindPlayersByTeamRequest request) throws FindPlayersFailureException {
 
         try {
             List<Player> players = playerDAO.findByTeamId(request.getTeamId());
@@ -44,11 +44,11 @@ public class PlayerService {
                     .map(PlayerDTO.FindPlayerResponse::from)
                     .collect(Collectors.toList());
         } catch (SQLException exception) {
-            throw new FindPlayersFailureException("Failed to Find players By Team While execute sql\nCause: " + exception.getMessage());
+            throw new FindPlayersFailureException("선수 조회에 실패 하였습니다.");
         }
     }
 
-    public List<PlayerDTO.FindPlayerGroupByPositionResponse> findPlayerGroupByPosition() {
+    public List<PlayerDTO.FindPlayerGroupByPositionResponse> findPlayerGroupByPosition() throws FindPlayersFailureException {
 
         try {
             List<Player> players = playerDAO.findPlayerGroupByPosition();
@@ -56,7 +56,7 @@ public class PlayerService {
                     .map(PlayerDTO.FindPlayerGroupByPositionResponse::from)
                     .collect(Collectors.toList());
         } catch (SQLException exception) {
-            throw new FindPlayersFailureException("Failed to Find players Group By Position While execute sql\nCause: " + exception.getMessage());
+            throw new FindPlayersFailureException("선수 조회에 실패 하였습니다.");
         }
     }
 
