@@ -4,9 +4,9 @@ import dao.PlayerDAO;
 import dto.player.PlayerDTO;
 import lombok.RequiredArgsConstructor;
 import model.Player;
-import Exception.FindPlayersFailureException;
-import Exception.PlayerRegistrationFailureException;
-import Exception.PlayerUpdateFailureException;
+import exception.FindPlayersFailureException;
+import exception.PlayerRegistrationFailureException;
+import exception.PlayerUpdateFailureException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -45,6 +45,18 @@ public class PlayerService {
                     .collect(Collectors.toList());
         } catch (SQLException exception) {
             throw new FindPlayersFailureException("Failed to Find players By Team While execute sql\nCause: " + exception.getMessage());
+        }
+    }
+
+    public List<PlayerDTO.FindPlayerGroupByPositionResponse> findPlayerGroupByPosition() {
+
+        try {
+            List<Player> players = playerDAO.findPlayerGroupByPosition();
+            return players.stream()
+                    .map(PlayerDTO.FindPlayerGroupByPositionResponse::from)
+                    .collect(Collectors.toList());
+        } catch (SQLException exception) {
+            throw new FindPlayersFailureException("Failed to Find players Group By Position While execute sql\nCause: " + exception.getMessage());
         }
     }
 
