@@ -1,12 +1,15 @@
 package service;
 
 import dao.PlayerDAO;
+import dao.TeamDAO;
 import db.DBConnection;
 import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
+import dto.team.TeamRequest;
 import org.junit.jupiter.api.*;
-import Exception.PlayerRegistrationFailureException;
+import exception.PlayerRegistrationFailureException;
+import util.ResponseDTOPrinter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,14 +22,19 @@ class PlayerServiceTest {
     private static final PlayerDAO playerDao = new PlayerDAO(connection);
     private static final PlayerService playerService = new PlayerService(playerDao);
 
+    private static final TeamDAO teamDAO = new TeamDAO(connection);
+    private static final TeamService teamService = new TeamService(teamDAO);
+
     @BeforeEach
     void setUp() throws SQLException {
         connection.prepareStatement(Sql.PLAYER.getCreate()).execute();
+        connection.prepareStatement(Sql.TEAM.getCreate()).execute();
     }
 
     @AfterEach
     void cleanUP() throws SQLException {
         connection.prepareStatement(Sql.PLAYER.getDrop()).execute();
+        connection.prepareStatement(Sql.TEAM.getDrop()).execute();
     }
 
     @DisplayName("선수 등록 성공")
@@ -173,4 +181,44 @@ class PlayerServiceTest {
 
     }
 
+    @DisplayName("포지션 별 선수 페이지 성공 테스트")
+    @Test
+    void findPlayerGroupByPosition() {
+        //given
+        PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
+                .teamId(1L)
+                .name("1팀포수")
+                .position(Position.valueOf("C").getValue())
+                .build();
+
+        PlayerDTO.NewPlayerRequest playerRequest2 = PlayerDTO.NewPlayerRequest.builder()
+                .teamId(1L)
+                .name("1팀투수")
+                .position(Position.valueOf("P").getValue())
+                .build();
+
+        PlayerDTO.NewPlayerRequest playerRequest3 = PlayerDTO.NewPlayerRequest.builder()
+                .teamId(2L)
+                .name("2팀포수")
+                .position(Position.valueOf("C").getValue())
+                .build();
+
+        playerService.save(playerRequest1);
+        playerService.save(playerRequest2);
+        playerService.save(playerRequest3);
+
+        TeamRequest.Create teamRequest1 = new TeamRequest.Create("TeamA", 1L);
+        TeamRequest.Create teamRequest2 = new TeamRequest.Create("TeamB", 2L);
+
+        teamService.save(teamRequest1);
+        teamService.save(teamRequest2);
+
+        //when
+        List<PlayerDTO.FindPlayerGroupByPositionResponse> response = playerService.findPlayerGroupByPosition();
+        ResponseDTOPrinter.printResponseDTO(response);
+
+        //then
+        Assertions.assertEquals(3, response.size());
+
+    }
 }
