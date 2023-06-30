@@ -10,9 +10,9 @@ import java.util.Map;
 
 class RequestParserTest {
 
-    @DisplayName("파싱 성공 테스트")
+    @DisplayName("파싱 성공 테스트 - 쿼리 스트링 형식")
     @Test
-    void parse_Success_Test() {
+    void parse_Success_With_QueryString_Test() {
         // Given
         String consoleRequest = "선수등록?teamId=1&name=이대호&position=1루수";
 
@@ -32,14 +32,53 @@ class RequestParserTest {
         Assertions.assertEquals(expectedBody, actualBody);
     }
 
-    @DisplayName("파싱 실패 테스트")
+    @DisplayName("파싱 실패 테스트 - 쿼리 스트링 형식")
     @Test
-    void parse_Failed_Test() {
+    void parse_Failed_With_QueryString_Test() {
         // Given
         String consoleBadRequest = "선수등록?teamId=1&name==이대호&position=1루수";
 
         // When
         // Then
         Assertions.assertThrows(IllegalArgumentException.class, () -> RequestParser.parse(consoleBadRequest));
+    }
+
+    @DisplayName("파싱 실패 테스트 - 쿼리 스트링 형식")
+    @Test
+    void parse_Failed_With_QueryString_Test2() {
+        // Given
+        String consoleBadRequest = "선수등록1?teamId=1&name이대호&position=1루수";
+
+        // When
+        // Then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> RequestParser.parse(consoleBadRequest));
+    }
+
+    @DisplayName("파싱 성공 테스트 - 일반 형식")
+    @Test
+    void parse_Success_Without_QueryString_Test() {
+        // Given
+        String consoleRequest = "선수목록";
+
+        // When
+        String expectedHeader = "선수목록";
+        Request actual = RequestParser.parse(consoleRequest);
+
+        // Then
+        Assertions.assertEquals(expectedHeader, actual.getHeader());
+        Assertions.assertNull(actual.getBody());
+    }
+
+    @DisplayName("파싱 실패 테스트 - 일반 형식")
+    @Test
+    void parse_Failed_Without_QueryString_Test() {
+        // Given
+        String consoleBadRequest = "선수목록?";
+
+        // When
+        // Then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            RequestParser.parse(consoleBadRequest);
+        });
     }
 }
