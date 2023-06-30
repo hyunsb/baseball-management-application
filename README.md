@@ -38,7 +38,7 @@
 mysql
   Set in [DBConnectInfo.java](https://github.com/hyunsb/baseball-management-application/blob/main/src/main/java/db/DBConnectInfo.java)
   - user : {username}
-  - password : {password}, default - 1234
+  - password : {password}
 
   table 생성
   - table query : [table.sql](https://github.com/hyunsb/baseball-management-application/blob/main/src/test/java/db/table.sql)
@@ -217,8 +217,10 @@ List<OutPlayerDTO.FindOutPlayerResponse>에 담아서 출력합니다.
 ---------------------------------------------------------------
 | playerId | name | position | reason | outDay                |
 ---------------------------------------------------------------
-| 1        | 이병규 | 포수   | 도박   | 2023-06-30 12:30:49.0  |
-| 2        | 박찬호 | 1루수  | 건강   | 2023-06-30 13:04:31.0  |
+| 1        | 이병규  | 포수       | 도박     | 2023-06-30 12:30:49.0 |
+| 2        | 박찬호  | 1루수      | 건강     | 2023-06-30 13:04:31.0 |
+| 3        | 류현진  | 2루수      |        |                       |
+| 4        | 김광현  | 3루수      |        |                       |
 ---------------------------------------------------------------
 ```
 
