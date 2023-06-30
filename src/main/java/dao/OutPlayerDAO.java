@@ -2,7 +2,7 @@ package dao;
 
 import lombok.RequiredArgsConstructor;
 import model.OutPlayer;
-import Exception.PlayerRegistrationFailureException;
+import exception.PlayerRegistrationFailureException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
