@@ -17,7 +17,14 @@ public enum Sql {
            "    player_id bigint,\n" +
            "    created_at timestamp not null DEFAULT CURRENT_TIMESTAMP,\n" +
            "    foreign key (player_id) references player(id)\n" +
-           "    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;", "DROP TABLE if exists out_player");
+           "    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;", "DROP TABLE if exists out_player"),
+    TEAM("create table team (\n" +
+            "    id bigint primary key auto_increment,\n" +
+            "    name varchar(45) unique not null,\n" +
+            "    created_at timestamp not null DEFAULT CURRENT_TIMESTAMP,\n" +
+            "    stadium_id bigint,\n" +
+            "    foreign key (stadium_id) references stadium(id)\n" +
+            ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;", "DROP TABLE if exists team");
 
     private final String create;
     private final String drop;
