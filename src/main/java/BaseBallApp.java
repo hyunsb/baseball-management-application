@@ -53,7 +53,7 @@ public class BaseBallApp {
                 Request request = View.inputRequest();
                 mappingRequest(request);
             } catch (IllegalAccessException | InvocationTargetException | BadRequestException exception) {
-                View.printErrorMessage(exception.getMessage());
+                View.printErrorMessage(exception.getCause().toString());
             }
         }
     }
