@@ -34,7 +34,7 @@
   - 포지션별 팀 야구 선수페이지
       - ResponseDTO를 전달 받아 pivot형식으로 출력
    
-DB설정
+## DB설정
 mysql
   Set in [DBConnectInfo.java](https://github.com/hyunsb/baseball-management-application/blob/main/src/main/java/db/DBConnectInfo.java)
   - user : {username}
