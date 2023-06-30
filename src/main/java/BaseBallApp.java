@@ -81,7 +81,7 @@ public class BaseBallApp {
         try {
             StadiumRequest stadiumRequest = StadiumRequest.from(request);
             StadiumResponse response = STADIUM_SERVICE.save(stadiumRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (StadiumRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -94,7 +94,7 @@ public class BaseBallApp {
             if (!Objects.isNull(request.getBody())) throw new BadRequestException();
 
             List<StadiumResponse> allStadiums = STADIUM_SERVICE.findAll();
-            View.printResponse(request.getHeader(), allStadiums);
+            View.printResponse(allStadiums);
 
         } catch (StadiumFindFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -106,7 +106,7 @@ public class BaseBallApp {
         try {
             TeamRequest teamRequest = TeamRequest.from(request);
             TeamResponse response = TEAM_SERVICE.save(teamRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (TeamRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -118,7 +118,7 @@ public class BaseBallApp {
         try {
             if (!Objects.isNull(request.getBody())) throw new BadRequestException();
             List<TeamWithStadiumResponse> allTeamWithStadium = TEAM_SERVICE.findAllWithStadium();
-            View.printResponse(request.getHeader(), allTeamWithStadium);
+            View.printResponse(allTeamWithStadium);
 
         } catch (TeamFindFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -130,7 +130,7 @@ public class BaseBallApp {
         try {
             PlayerDTO.FindPlayersByTeamRequest findPlayersByTeamRequest = PlayerDTO.FindPlayersByTeamRequest.from(request);
             List<PlayerDTO.FindPlayerResponse> response = PLAYER_SERVICE.findByTeam(findPlayersByTeamRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (StadiumRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -141,7 +141,7 @@ public class BaseBallApp {
     private static void viewOutPlayers(final Request request) {
         try {
             List<OutPlayerDTO.FindOutPlayerResponse> response = OUT_PLAYER_SERVICE.findOutPlayers();
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (StadiumRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -152,7 +152,7 @@ public class BaseBallApp {
     private static void viewPlayersGroupByPosition(final Request request) {
         try {
             List<PlayerDTO.FindPlayerGroupByPositionResponse> response = PLAYER_SERVICE.findPlayerGroupByPosition();
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (StadiumRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -164,7 +164,7 @@ public class BaseBallApp {
         try {
             PlayerDTO.NewPlayerRequest newPlayerRequest = PlayerDTO.NewPlayerRequest.from(request);
             PlayerDTO.FindPlayerResponse response = PLAYER_SERVICE.save(newPlayerRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (TeamRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());
@@ -176,7 +176,7 @@ public class BaseBallApp {
         try {
             OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.from(request);
             OutPlayerDTO.FindOutPlayerResponse response = OUT_PLAYER_SERVICE.save(newOutPlayerRequest);
-            View.printResponse(request.getHeader(), response);
+            View.printResponse(response);
 
         } catch (TeamRegistrationFailureException | BadRequestException exception) {
             View.printErrorMessage(exception.getMessage());

@@ -6,6 +6,7 @@ import dto.team.TeamResponse;
 import model.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import view.View;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ class ResponseDTOPrinterTest {
                 .createAt(Timestamp.valueOf(LocalDateTime.now())).build();
 
         //when
-        ResponseDTOPrinter.printResponseDTO(teamResponse);
+        View.ResponseDTOPrinter.printResponseDTO(teamResponse);
 
         //then
         //check console
@@ -67,7 +68,7 @@ class ResponseDTOPrinterTest {
         findPlayerResponseList.add(response5);
 
         //when
-        ResponseDTOPrinter.printResponseDTO(findPlayerResponseList);
+        View.ResponseDTOPrinter.printResponseDTO(findPlayerResponseList);
 
         //then
         //check console
@@ -144,7 +145,7 @@ class ResponseDTOPrinterTest {
         responseList.add(response8);
 
         //when
-        ResponseDTOPrinter.printPivotTable(responseList, "teamName", "position", "name");
+        View.ResponseDTOPrinter.printPivotTable(responseList, "teamName", "position", "name");
 
         //then
         //check console

@@ -8,10 +8,9 @@ import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
 import dto.team.TeamRequest;
-import model.Team;
-import org.junit.jupiter.api.*;
 import exception.PlayerRegistrationFailureException;
-import util.ResponseDTOPrinter;
+import org.junit.jupiter.api.*;
+import view.View;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -206,7 +205,7 @@ class PlayerServiceTest {
 
         //when
         List<PlayerDTO.FindPlayerGroupByPositionResponse> response = playerService.findPlayerGroupByPosition();
-        ResponseDTOPrinter.printResponseDTO(response);
+        View.printResponse(response);
 
         //then
         Assertions.assertEquals(3, response.size());

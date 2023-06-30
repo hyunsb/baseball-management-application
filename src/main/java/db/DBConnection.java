@@ -1,5 +1,7 @@
 package db;
 
+import exception.DBConnectException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -9,17 +11,16 @@ public class DBConnection {
     private DBConnection() {
     }
 
-    public static Connection getInstance(){
-        String url = "jdbc:mysql://localhost:3306/baseball";
-        String username = "root";
-        String password = "1234";
+    public static Connection getInstance() throws DBConnectException {
+        String url = DBConnectInfo.URL.value();
+        String username = DBConnectInfo.USER_NAME.value();
+        String password = DBConnectInfo.PASSWORD.value();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DBConnectInfo.DRIVER.value());
             return DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBConnectException(e.getMessage());
         }
-        return null;
     }
 }
