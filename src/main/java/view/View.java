@@ -39,6 +39,14 @@ public class View {
         ResponseDTOPrinter.printResponseDTO(responses);
     }
 
+    public static <T> void printResponseAsPivot(final T response, String colmStandard, String rowStandard, String valueStandard) {
+        ResponseDTOPrinter.printResponseDTOAsPivot(response, colmStandard, rowStandard, valueStandard);
+    }
+
+    public static <T> void printResponseAsPivot(final List<T> responses, String colmStandard, String rowStandard, String valueStandard) {
+        ResponseDTOPrinter.printResponseDTOAsPivot(responses, colmStandard, rowStandard, valueStandard);
+    }
+
     public static void printErrorMessage(String message) {
         System.out.println("\n" + message + "\n");
     }
