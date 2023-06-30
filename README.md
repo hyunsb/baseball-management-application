@@ -33,6 +33,18 @@
   - 각 ResponseDTO를 전달 받아 동적으로 class 의field name과 values를 추출해 table 형식으로 출력
   - 포지션별 팀 야구 선수페이지
       - ResponseDTO를 전달 받아 pivot형식으로 출력
+   
+DB설정
+mysql
+  Set in [DBConnectInfo.java](https://github.com/hyunsb/baseball-management-application/blob/main/src/main/java/db/DBConnectInfo.java)
+  - user : {username}
+  - password : {password}, default - 1234
+
+  table 생성
+  - table query : [table.sql](https://github.com/hyunsb/baseball-management-application/blob/main/src/test/java/db/table.sql)
+  - data query for help test : [data.sql](https://github.com/hyunsb/baseball-management-application/blob/main/src/test/java/db/data.sql)
+  - warnning : team_id, stadium_id는 auto_inc 이기 때문에 임의로 데이터 삽입시 제대로 연결되지 않음
+    
 
 # DOCS
 
