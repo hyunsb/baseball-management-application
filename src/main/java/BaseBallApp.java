@@ -3,7 +3,6 @@ import dao.OutPlayerDAO;
 import dao.PlayerDAO;
 import dao.StadiumDAO;
 import dao.TeamDAO;
-import db.DBConnection;
 import domain.Request;
 import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
@@ -27,15 +26,17 @@ import java.util.Objects;
 
 public class BaseBallApp {
 
-    private static final StadiumService STADIUM_SERVICE;
-    private static final TeamService TEAM_SERVICE;
-    private static final PlayerService PLAYER_SERVICE;
-    private static final OutPlayerService OUT_PLAYER_SERVICE;
+    private static StadiumService STADIUM_SERVICE;
+    private static TeamService TEAM_SERVICE;
+    private static PlayerService PLAYER_SERVICE;
+    private static OutPlayerService OUT_PLAYER_SERVICE;
 
-    // inject dependency
-    static {
-        Connection connection = DBConnection.getInstance();
+    private final Connection connection;
 
+    public BaseBallApp(Connection connection) {
+        this.connection = connection;
+
+        // 임시코드 -> 싱글톤으로 변경할 것
         StadiumDAO stadiumDAO = new StadiumDAO(connection);
         TeamDAO teamDAO = new TeamDAO(connection);
         PlayerDAO playerDAO = new PlayerDAO(connection);
@@ -45,19 +46,8 @@ public class BaseBallApp {
         TEAM_SERVICE = new TeamService(teamDAO, stadiumDAO);
         PLAYER_SERVICE = new PlayerService(playerDAO);
         OUT_PLAYER_SERVICE = new OutPlayerService(outPlayerDAO, playerDAO, connection);
-    }
 
-    public static void main(String[] args) {
-        while (true) {
-            try {
-                Request request = View.inputRequest();
-                mappingRequest(request);
-            } catch (BadRequestException | ServiceFailureException | RollbackException exception) {
-                View.printErrorMessage(exception.getMessage());
-            } catch (IllegalAccessException | InvocationTargetException exception) {
-                View.printErrorMessage(exception.getCause().toString());
-            }
-        }
+        run();
     }
 
     public static void mappingRequest(final Request request)
@@ -157,5 +147,18 @@ public class BaseBallApp {
         OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest = OutPlayerDTO.NewOutPlayerRequest.from(request);
         OutPlayerDTO.FindOutPlayerResponse response = OUT_PLAYER_SERVICE.save(newOutPlayerRequest);
         View.printResponse(response);
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                Request request = View.inputRequest();
+                mappingRequest(request);
+            } catch (BadRequestException | ServiceFailureException | RollbackException exception) {
+                View.printErrorMessage(exception.getMessage());
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                View.printErrorMessage(exception.getCause().toString());
+            }
+        }
     }
 }
