@@ -11,13 +11,9 @@ public class DBConnection {
     private DBConnection() {
     }
 
-    public static Connection getInstance() throws DBConnectException {
-        String url = DBConnectInfo.URL.value();
-        String username = DBConnectInfo.USER_NAME.value();
-        String password = DBConnectInfo.PASSWORD.value();
-
+    public static Connection getInstance(String url, String username, String password, String driver) throws DBConnectException {
         try {
-            Class.forName(DBConnectInfo.DRIVER.value());
+            Class.forName(driver);
             return DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
             throw new DBConnectException(e.getMessage());
