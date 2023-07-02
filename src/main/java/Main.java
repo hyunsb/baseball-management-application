@@ -1,25 +1,25 @@
-import db.ConnectionPoolManager;
+import core.DispatcherServlet;
+import domain.Request;
+import exception.BadRequestException;
+import exception.RollbackException;
+import exception.ServiceFailureException;
 import view.View;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.lang.reflect.InvocationTargetException;
 
 public class Main {
     public static void main(String[] args) {
-        ConnectionPoolManager connectionPoolManager = ConnectionPoolManager.getInstance();
-
-        try {
-            Connection connection = connectionPoolManager.getConnection();
-            new BaseBallApp(connection);
-            connectionPoolManager.releaseConnection(connection);
-        } catch (SQLException e) {
-            View.printErrorMessage(e.getMessage() + "\n" + e.getCause());
+        while (true) {
+            try {
+                Request request = View.inputRequest();
+                DispatcherServlet.mappingRequest(request);
+            } catch (BadRequestException | ServiceFailureException exception) {
+                View.printErrorMessage(exception.getMessage());
+            } catch (RollbackException | IllegalAccessException | InvocationTargetException exception) {
+                View.printResponse(exception.getCause().getCause());
+            }
         }
-
-        try {
-            connectionPoolManager.closeAllConnections();
-        } catch (SQLException e) {
-            View.printErrorMessage(e.getMessage() + "\n" + e.getCause());
-        }
+        // Console.close(); 프로그램 종료 시 InputStream close
+        // SingletonPool.ConnectionPoolManager().closeAllConnections(); 프로그램 종료 시 모든 커넥션 close
     }
 }
