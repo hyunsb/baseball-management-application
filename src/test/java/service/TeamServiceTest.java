@@ -1,8 +1,8 @@
 package service;
 
+import core.ConnectionPoolManager;
 import dao.StadiumDAO;
 import dao.TeamDAO;
-import db.DBConnection;
 import dto.stadium.StadiumRequest;
 import dto.team.TeamRequest;
 import dto.team.TeamResponse;
@@ -14,35 +14,31 @@ import java.util.List;
 
 class TeamServiceTest {
 
-    private static final TeamDAO TEAM_DAO;
-    private static final StadiumDAO STADIUM_DAO;
-    private static final TeamService TEAM_SERVICE;
-    private static final StadiumService STADIUM_SERVICE;
-
-    static {
-        Connection connection = DBConnection.getInstance();
-        TEAM_DAO = new TeamDAO(connection);
-        STADIUM_DAO = new StadiumDAO(connection);
-
-        TEAM_SERVICE = new TeamService(TEAM_DAO, STADIUM_DAO);
-        STADIUM_SERVICE = new StadiumService(STADIUM_DAO);
-    }
+    private static final ConnectionPoolManager CONNECTION_POOL_MANAGER = ConnectionPoolManager.getInstance();
+    private static final TeamDAO TEAM_DAO = new TeamDAO();
+    private static final StadiumDAO STADIUM_DAO = new StadiumDAO();
+    private static final TeamService TEAM_SERVICE = new TeamService(CONNECTION_POOL_MANAGER, TEAM_DAO, STADIUM_DAO);
+    private static final StadiumService STADIUM_SERVICE = new StadiumService(CONNECTION_POOL_MANAGER, STADIUM_DAO);
 
     @AfterAll
     static void afterAll() throws SQLException {
-        TEAM_DAO.deleteAll();
-        STADIUM_DAO.deleteAll();
+        Connection connection = CONNECTION_POOL_MANAGER.getConnection();
+        TEAM_DAO.deleteAll(connection);
+        STADIUM_DAO.deleteAll(connection);
+        CONNECTION_POOL_MANAGER.releaseConnection(connection);
     }
 
     @BeforeEach
     void setUp() throws SQLException {
-        TEAM_DAO.deleteAll();
-        STADIUM_DAO.deleteAll();
+        Connection connection = CONNECTION_POOL_MANAGER.getConnection();
+        TEAM_DAO.deleteAll(connection);
+        STADIUM_DAO.deleteAll(connection);
+        CONNECTION_POOL_MANAGER.releaseConnection(connection);
     }
 
     @DisplayName("teamService 팀 삽입 성공 테스트")
     @Test
-    void save_Success_Test() {
+    void save_Success_Test() throws SQLException {
         // Given
         STADIUM_SERVICE.save(new StadiumRequest("Test Stadium"));
 
@@ -60,7 +56,7 @@ class TeamServiceTest {
 
     @DisplayName("teamService 팀 삽입 실패 테스트")
     @Test
-    void save_Failed_DuplicateName_Test() {
+    void save_Failed_DuplicateName_Test() throws SQLException {
         // Given
         String name = "test Team";
         Long stadiumId = 1L;
@@ -74,7 +70,7 @@ class TeamServiceTest {
 
     @DisplayName("teamService 전체 팀 검색 테스트")
     @Test
-    void findAll_Success_Test() {
+    void findAll_Success_Test() throws SQLException {
         // Given
         String name1 = "test Team1";
         Long stadiumId1 = 1L;

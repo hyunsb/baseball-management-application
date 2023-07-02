@@ -1,5 +1,6 @@
 package service;
 
+import core.ConnectionPoolManager;
 import exception.FindPlayersFailureException;
 import exception.PlayerRegistrationFailureException;
 import dao.OutPlayerDAO;
@@ -17,20 +18,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OutPlayerService {
 
+    private final ConnectionPoolManager connectionPoolManager;
     private final OutPlayerDAO outPlayerDAO;
     private final PlayerDAO playerDAO;
-    private final Connection connection;
 
-    public OutPlayerDTO.FindOutPlayerResponse save(OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest) throws RollbackException, PlayerRegistrationFailureException {
+    public OutPlayerDTO.FindOutPlayerResponse save(OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest)
+            throws RollbackException, PlayerRegistrationFailureException, SQLException {
 
+        Connection connection = connectionPoolManager.getConnection();
         try {
             connection.setAutoCommit(false);
 
-            outPlayerDAO.registerOutPlayer(newOutPlayerRequest.getReason(), newOutPlayerRequest.getPlayerId());
-            playerDAO.updatePlayer(newOutPlayerRequest.getPlayerId());
+            outPlayerDAO.registerOutPlayer(connection, newOutPlayerRequest.getReason(), newOutPlayerRequest.getPlayerId());
+            playerDAO.updatePlayer(connection, newOutPlayerRequest.getPlayerId());
 
             connection.commit();
-            return OutPlayerDTO.FindOutPlayerResponse.from(outPlayerDAO.findById(newOutPlayerRequest.getPlayerId()).orElseThrow(() -> new FindPlayersFailureException("Failed to Find Out user id: " + newOutPlayerRequest.getPlayerId())));
+            return OutPlayerDTO.FindOutPlayerResponse.from(outPlayerDAO.findById(connection, newOutPlayerRequest.getPlayerId()).orElseThrow(() -> new FindPlayersFailureException("Failed to Find Out user id: " + newOutPlayerRequest.getPlayerId())));
         } catch (SQLException | FindPlayersFailureException | PlayerUpdateFailureException exception) {
             try {
                 connection.rollback();
@@ -45,20 +48,21 @@ public class OutPlayerService {
             } catch (SQLException exception) {
                 exception.printStackTrace();
             }
+            connectionPoolManager.releaseConnection(connection);
         }
     }
 
-
-
-    public List<OutPlayerDTO.FindOutPlayerResponse> findOutPlayers() throws FindPlayersFailureException {
+    public List<OutPlayerDTO.FindOutPlayerResponse> findOutPlayers() throws FindPlayersFailureException, SQLException {
+        Connection connection = connectionPoolManager.getConnection();
         try {
-            List<OutPlayer> outPlayers = outPlayerDAO.findOutPlayers();
+            List<OutPlayer> outPlayers = outPlayerDAO.findOutPlayers(connection);
             return outPlayers.stream()
                     .map(OutPlayerDTO.FindOutPlayerResponse::from)
                     .collect(Collectors.toList());
         } catch (SQLException exception) {
             throw new FindPlayersFailureException("선수 등록에 실패 하였습니다.");
+        } finally {
+            connectionPoolManager.releaseConnection(connection);
         }
     }
-
 }
