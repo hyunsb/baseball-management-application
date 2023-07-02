@@ -1,5 +1,6 @@
 package util;
 
+import core.ConnectionPoolManager;
 import dao.OutPlayerDAO;
 import dao.PlayerDAO;
 
@@ -16,6 +17,7 @@ import service.OutPlayerService;
 import view.View;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -84,13 +86,11 @@ class ResponseDTOPrinterTest {
 
     @DisplayName("퇴출목록 print")
     @Test
-    public void printOutPlayers() {
-        Connection connection = DBConnection.getInstance();
+    public void printOutPlayers() throws SQLException {
+        PlayerDAO playerDAO = new PlayerDAO();
+        OutPlayerDAO outPlayerDAO = new OutPlayerDAO();
 
-        PlayerDAO playerDAO = new PlayerDAO(connection);
-        OutPlayerDAO outPlayerDAO = new OutPlayerDAO(connection);
-
-        OutPlayerService outPlayerService = new OutPlayerService(outPlayerDAO, playerDAO, connection);
+        OutPlayerService outPlayerService = new OutPlayerService(ConnectionPoolManager.getInstance(), outPlayerDAO, playerDAO);
         List<OutPlayerDTO.FindOutPlayerResponse> responses = outPlayerService.findOutPlayers();
         View.printResponse(responses);
 

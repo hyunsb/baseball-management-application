@@ -1,6 +1,5 @@
 package dao;
 
-import lombok.RequiredArgsConstructor;
 import model.OutPlayer;
 import exception.PlayerRegistrationFailureException;
 
@@ -14,19 +13,16 @@ import java.util.Optional;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-@RequiredArgsConstructor
 public class OutPlayerDAO {
-
-    private final Connection connection;
 
     /**
      * Register Player
      *
-     * @param reason 퇴출 이유
+     * @param reason   퇴출 이유
      * @param playerId 선수 아이디
      * @throws SQLException
      */
-    public void registerOutPlayer(String reason, Long playerId) throws SQLException {
+    public void registerOutPlayer(Connection connection, String reason, Long playerId) throws SQLException {
 
         String query = "INSERT INTO out_player (reason, player_id) VALUES (?, ?)";
 
@@ -49,7 +45,7 @@ public class OutPlayerDAO {
      * @param id 선수 id
      * @return Matched Out Player by id as Optional, Optional.empty() if not found
      */
-    public Optional<OutPlayer> findById(Long id) throws SQLException {
+    public Optional<OutPlayer> findById(Connection connection, Long id) throws SQLException {
 
         String query = "SELECT p.id AS id, p.name AS name, p.position AS position, op.reason AS out_reason, op.created_at AS out_date\n" +
                 "FROM out_player op\n" +
@@ -74,7 +70,7 @@ public class OutPlayerDAO {
      * @return Matched List of Out Players
      * @throws SQLException
      */
-    public List<OutPlayer> findOutPlayers() throws SQLException {
+    public List<OutPlayer> findOutPlayers(Connection connection) throws SQLException {
 
         String query = "SELECT\n" +
                 "    p.id AS id,\n" +

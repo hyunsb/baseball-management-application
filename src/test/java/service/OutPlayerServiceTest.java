@@ -1,14 +1,14 @@
 package service;
 
-import exception.PlayerRegistrationFailureException;
+import core.ConnectionPoolManager;
 import dao.OutPlayerDAO;
 import dao.PlayerDAO;
-import db.DBConnection;
 import db.Sql;
 import domain.Position;
 import domain.Reason;
 import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
+import exception.PlayerRegistrationFailureException;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -17,20 +17,23 @@ import java.util.List;
 
 class OutPlayerServiceTest {
 
-    private static final Connection connection = DBConnection.getInstance();
-    private static final PlayerDAO playerDao = new PlayerDAO(connection);
-    private static final PlayerService playerService = new PlayerService(playerDao);
-    private static final OutPlayerDAO outPlayerDao = new OutPlayerDAO(connection);
-    private static final OutPlayerService outPlayerService = new OutPlayerService(outPlayerDao, playerDao, connection);
+    private static final ConnectionPoolManager CONNECTION_POOL_MANAGER = ConnectionPoolManager.getInstance();
+    private static final PlayerDAO playerDao = new PlayerDAO();
+    private static final OutPlayerDAO outPlayerDao = new OutPlayerDAO();
+
+    private static final PlayerService playerService = new PlayerService(CONNECTION_POOL_MANAGER, playerDao);
+    private static final OutPlayerService outPlayerService = new OutPlayerService(CONNECTION_POOL_MANAGER, outPlayerDao, playerDao);
 
     @BeforeEach
     void setUp() throws SQLException {
+        Connection connection = CONNECTION_POOL_MANAGER.getConnection();
         connection.prepareStatement(Sql.OUT_PLAYER.getCreate()).execute();
         connection.prepareStatement(Sql.PLAYER.getCreate()).execute();
     }
 
     @AfterEach
     void clenUp() throws SQLException {
+        Connection connection = CONNECTION_POOL_MANAGER.getConnection();
         connection.prepareStatement(Sql.OUT_PLAYER.getDrop()).execute();
         connection.prepareStatement(Sql.PLAYER.getDrop()).execute();
     }
@@ -120,12 +123,12 @@ class OutPlayerServiceTest {
 
         //then
         Assertions.assertThrows(PlayerRegistrationFailureException.class, () -> outPlayerService.save(outPlayerRequest));
-        Assertions.assertEquals(1L, playerDao.findById(1L).get().getTeamId());
+        Assertions.assertEquals(1L, playerDao.findById(CONNECTION_POOL_MANAGER.getConnection(), 1L).get().getTeamId());
     }
 
     @DisplayName("퇴출 선수 목록")
     @Test
-    void findOutPlayers() {
+    void findOutPlayers() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)

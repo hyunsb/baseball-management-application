@@ -9,12 +9,6 @@ import java.util.Optional;
 
 public class StadiumDAO {
 
-    private final Connection connection;
-
-    public StadiumDAO(Connection connection) {
-        this.connection = connection;
-    }
-
     /**
      * Stadium 생성
      *
@@ -22,14 +16,14 @@ public class StadiumDAO {
      * @return Optional Stadium
      * @throws SQLException
      */
-    public Optional<Stadium> createStadium(String name) throws SQLException {
+    public Optional<Stadium> createStadium(Connection connection, String name) throws SQLException {
         String query = "INSERT INTO stadium (name) VALUES (?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, name);
 
             int rowCount = statement.executeUpdate();
-            if (rowCount > 0) return findStadiumByName(name);
+            if (rowCount > 0) return findStadiumByName(connection, name);
         }
         return Optional.empty(); // error
     }
@@ -41,7 +35,7 @@ public class StadiumDAO {
      * @return Optional Stadium
      * @throws SQLException
      */
-    public Optional<Stadium> findStadiumById(Long id) throws SQLException {
+    public Optional<Stadium> findStadiumById(Connection connection, Long id) throws SQLException {
         String query = "SELECT * FROM stadium WHERE id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -62,7 +56,7 @@ public class StadiumDAO {
      * @return Optional Stadium
      * @throws SQLException
      */
-    public Optional<Stadium> findStadiumByName(String name) throws SQLException {
+    public Optional<Stadium> findStadiumByName(Connection connection, String name) throws SQLException {
         String query = "SELECT * FROM stadium WHERE name = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -82,7 +76,7 @@ public class StadiumDAO {
      * @return
      * @throws SQLException
      */
-    public List<Stadium> findAll() throws SQLException {
+    public List<Stadium> findAll(Connection connection) throws SQLException {
         String query = "SELECT * FROM stadium ORDER BY id asc";
 
         List<Stadium> stadiums = new ArrayList<>();
@@ -103,7 +97,7 @@ public class StadiumDAO {
      * @param name
      * @throws SQLException
      */
-    public void deleteByName(String name) throws SQLException {
+    public void deleteByName(Connection connection, String name) throws SQLException {
         String query = "DELETE FROM stadium WHERE name = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -117,7 +111,7 @@ public class StadiumDAO {
      *
      * @throws SQLException
      */
-    public void deleteAll() throws SQLException {
+    public void deleteAll(Connection connection) throws SQLException {
         String query = "DELETE FROM stadium";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
