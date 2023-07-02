@@ -1,5 +1,7 @@
-package db;
+package core;
 
+import db.DBConnectConfig;
+import db.DBConnection;
 import exception.DBConnectException;
 
 import java.sql.Connection;
@@ -10,6 +12,7 @@ import java.util.Objects;
 
 public class ConnectionPoolManager {
 
+    private static final int INIT_POOL_SIZE = 5;
     private static final int MAX_POOL_SIZE = 10;
 
     private static ConnectionPoolManager connectionPoolManager;
@@ -18,7 +21,12 @@ public class ConnectionPoolManager {
     private final List<Connection> usedConnections;
 
     private ConnectionPoolManager() {
-        connectionPool = new ArrayList<>();
+        List<Connection> connections = new ArrayList<>();
+        for (int i = 0; i < INIT_POOL_SIZE; i++) {
+            connections.add(createConnection());
+        }
+
+        connectionPool = connections;
         usedConnections = new ArrayList<>();
     }
 
@@ -30,14 +38,21 @@ public class ConnectionPoolManager {
     }
 
     public Connection getConnection() throws SQLException {
+        if (connectionPool.isEmpty() && usedConnections.size() == MAX_POOL_SIZE)
+            throw new SQLException("커넥션 풀이 가득 찼습니다, 새로운 커넥션을 만들 수 없습니다.");
+
         if (connectionPool.isEmpty() && usedConnections.size() < MAX_POOL_SIZE) {
             connectionPool.add(createConnection());
-
-            final Connection connection = connectionPool.remove(connectionPool.size() - 1);
-            usedConnections.add(connection);
-            return connection;
         }
-        throw new SQLException("커넥션 풀이 가득 찼습니다, 새로운 커넥션을 만들 수 없습니다.");
+
+        final Connection connection = connectionPool.remove(connectionPool.size() - 1);
+        usedConnections.add(connection);
+        return connection;
+    }
+
+    public void printStatus() {
+        System.out.println("connectionPool size:" + connectionPool.size());
+        System.out.println("usedConnectionPool size:" + usedConnections.size());
     }
 
     private Connection createConnection() throws DBConnectException {
