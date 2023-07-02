@@ -1,11 +1,6 @@
 package controller;
 
-import core.ConnectionPoolManager;
 import core.annotation.RequestMapping;
-import dao.OutPlayerDAO;
-import dao.PlayerDAO;
-import dao.StadiumDAO;
-import dao.TeamDAO;
 import domain.Request;
 import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
