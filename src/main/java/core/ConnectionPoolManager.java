@@ -37,9 +37,9 @@ public class ConnectionPoolManager {
         return connectionPoolManager;
     }
 
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() throws DBConnectException {
         if (connectionPool.isEmpty() && usedConnections.size() == MAX_POOL_SIZE)
-            throw new SQLException("커넥션 풀이 가득 찼습니다, 새로운 커넥션을 만들 수 없습니다.");
+            throw new DBConnectException("커넥션 풀이 가득 찼습니다, 새로운 커넥션을 만들 수 없습니다.");
 
         if (connectionPool.isEmpty() && usedConnections.size() < MAX_POOL_SIZE) {
             connectionPool.add(createConnection());
