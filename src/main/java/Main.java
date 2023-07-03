@@ -16,14 +16,15 @@ public class Main {
                 Request request = View.inputRequest();
                 DispatcherServlet.mappingRequest(request);
 
-            } catch (DBConnectException | BadRequestException | ServiceFailureException exception) {
-                View.printErrorMessage(exception.getMessage());
-
             } catch (RollbackException | IllegalAccessException exception) {
                 View.printErrorMessage(exception.getCause().toString());
 
             } catch (InvocationTargetException exception) {
                 View.printErrorMessage(exception.getTargetException().getMessage());
+
+            } catch (DBConnectException exception) {
+                View.printErrorMessage(exception.getMessage());
+                break;
             }
         }
         // Console.close(); 프로그램 종료 시 InputStream close
