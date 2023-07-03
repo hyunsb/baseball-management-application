@@ -21,7 +21,9 @@ public class Main {
 
             } catch (InvocationTargetException exception) {
                 View.printErrorMessage(exception.getTargetException().getMessage());
-
+                if (exception.getTargetException() instanceof DBConnectException) {
+                    break;
+                }
             }  catch (BadRequestException exception) {
                 View.printErrorMessage(exception.getMessage());
 
