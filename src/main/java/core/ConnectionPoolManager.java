@@ -3,6 +3,7 @@ package core;
 import db.DBConnectConfig;
 import db.DBConnection;
 import exception.DBConnectException;
+import exception.ErrorMessage;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class ConnectionPoolManager {
 
     public Connection getConnection() throws DBConnectException {
         if (connectionPool.isEmpty() && usedConnections.size() == MAX_POOL_SIZE)
-            throw new DBConnectException("커넥션 풀이 가득 찼습니다, 새로운 커넥션을 만들 수 없습니다.");
+            throw new DBConnectException(ErrorMessage.CONNECTION_POOL_IS_FULL);
 
         if (connectionPool.isEmpty() && usedConnections.size() < MAX_POOL_SIZE) {
             connectionPool.add(createConnection());

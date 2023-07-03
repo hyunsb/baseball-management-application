@@ -2,6 +2,7 @@ package dto.team;
 
 import domain.Request;
 import exception.BadRequestException;
+import exception.ErrorMessage;
 import lombok.*;
 
 import java.util.Map;
@@ -26,17 +27,17 @@ public class TeamRequest {
 
     private static void validateBody(Map<String, String> body) throws BadRequestException {
         if (Objects.isNull(body))
-            throw new BadRequestException("요청에 필요한 데이터가 존재하지 않습니다.");
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_DATA);
 
         if (body.size() != 2 || !body.containsKey("name") || !body.containsKey("stadiumId"))
-            throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
     }
 
     private static Long convertStadiumIdToLong(String stadiumId) throws BadRequestException {
         try {
             return Long.parseLong(stadiumId);
         } catch (NumberFormatException exception) {
-            throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_DATA);
         }
     }
 }

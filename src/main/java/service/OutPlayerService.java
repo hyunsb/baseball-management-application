@@ -1,14 +1,12 @@
 package service;
 
 import core.ConnectionPoolManager;
-import exception.FindPlayersFailureException;
-import exception.PlayerRegistrationFailureException;
 import dao.OutPlayerDAO;
 import dao.PlayerDAO;
 import dto.player.OutPlayerDTO;
+import exception.*;
 import lombok.RequiredArgsConstructor;
 import model.OutPlayer;
-import exception.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,7 +21,7 @@ public class OutPlayerService {
     private final PlayerDAO playerDAO;
 
     public OutPlayerDTO.FindOutPlayerResponse save(OutPlayerDTO.NewOutPlayerRequest newOutPlayerRequest)
-            throws RollbackException, PlayerRegistrationFailureException, SQLException {
+            throws RollbackException, PlayerRegistrationFailureException {
 
         Connection connection = connectionPoolManager.getConnection();
         try {
@@ -40,9 +38,8 @@ public class OutPlayerService {
             } catch (SQLException rollbackException) {
                 throw new RollbackException(rollbackException.getMessage());
             }
-            throw new PlayerRegistrationFailureException("퇴출 선수 등록에 실패하였습니다");
-        }
-        finally {
+            throw new PlayerRegistrationFailureException(ErrorMessage.FAILED_OUT_PLAYER_REGISTRATION);
+        } finally {
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException exception) {
@@ -52,7 +49,7 @@ public class OutPlayerService {
         }
     }
 
-    public List<OutPlayerDTO.FindOutPlayerResponse> findOutPlayers() throws FindPlayersFailureException, SQLException {
+    public List<OutPlayerDTO.FindOutPlayerResponse> findOutPlayers() throws FindPlayersFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             List<OutPlayer> outPlayers = outPlayerDAO.findOutPlayers(connection);
@@ -60,7 +57,7 @@ public class OutPlayerService {
                     .map(OutPlayerDTO.FindOutPlayerResponse::from)
                     .collect(Collectors.toList());
         } catch (SQLException exception) {
-            throw new FindPlayersFailureException("선수 등록에 실패 하였습니다.");
+            throw new FindPlayersFailureException(ErrorMessage.FAILED_OUT_PLAYER_REGISTRATION);
         } finally {
             connectionPoolManager.releaseConnection(connection);
         }

@@ -2,7 +2,9 @@ package dto.stadium;
 
 import domain.Request;
 import exception.BadRequestException;
-import lombok.*;
+import exception.ErrorMessage;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,7 +22,10 @@ public class StadiumRequest {
     }
 
     private static void validateBody(Map<String, String> body) throws BadRequestException {
-        if (Objects.isNull(body)) throw new BadRequestException("요청에 필요한 데이터가 존재하지 않습니다.");
-        if (body.size() != 1 || !body.containsKey("name")) throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
+        if (Objects.isNull(body))
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_DATA);
+
+        if (body.size() != 1 || !body.containsKey("name"))
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
     }
 }

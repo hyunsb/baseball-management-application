@@ -1,5 +1,6 @@
 package dao;
 
+import exception.ErrorMessage;
 import model.OutPlayer;
 import exception.PlayerRegistrationFailureException;
 
@@ -33,7 +34,7 @@ public class OutPlayerDAO {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows < 0) {
-                throw new PlayerRegistrationFailureException("Failed to Register Out player while execute SQL");
+                throw new PlayerRegistrationFailureException(ErrorMessage.FAILED_PLAYER_REGISTRATION_SQL);
             }
 
         }
