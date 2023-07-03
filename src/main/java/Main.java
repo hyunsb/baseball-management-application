@@ -3,11 +3,9 @@ import domain.Request;
 import exception.BadRequestException;
 import exception.DBConnectException;
 import exception.RollbackException;
-import exception.ServiceFailureException;
 import view.View;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
