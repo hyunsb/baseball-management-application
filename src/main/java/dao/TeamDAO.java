@@ -10,12 +10,6 @@ import java.util.Optional;
 
 public class TeamDAO {
 
-    private final Connection connection;
-
-    public TeamDAO(Connection connection) {
-        this.connection = connection;
-    }
-
     /**
      * Team 생성
      *
@@ -23,7 +17,7 @@ public class TeamDAO {
      * @return Optional Team
      * @throws SQLException
      */
-    public Optional<Team> createTeam(String name, Long stadiumId) throws SQLException {
+    public Optional<Team> createTeam(Connection connection, String name, Long stadiumId) throws SQLException {
         String query = "INSERT INTO team (name, stadium_id) VALUES (?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -31,7 +25,7 @@ public class TeamDAO {
             statement.setLong(2, stadiumId);
 
             int rowCount = statement.executeUpdate();
-            if (rowCount > 0) return findTeamByName(name);
+            if (rowCount > 0) return findTeamByName(connection, name);
         }
         return Optional.empty(); // error
     }
@@ -43,7 +37,7 @@ public class TeamDAO {
      * @return Optional Team
      * @throws SQLException
      */
-    public Optional<Team> findTeamByName(String name) throws SQLException {
+    public Optional<Team> findTeamByName(Connection connection, String name) throws SQLException {
         String query = "SELECT * FROM team WHERE name = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -63,7 +57,7 @@ public class TeamDAO {
      * @return List Team
      * @throws SQLException
      */
-    public List<Team> findAll() throws SQLException {
+    public List<Team> findAll(Connection connection) throws SQLException {
         String query = "SELECT * FROM team";
 
         List<Team> teams = new ArrayList<>();
@@ -84,7 +78,7 @@ public class TeamDAO {
      * @return List TeamWithStadium
      * @throws SQLException
      */
-    public List<TeamWithStadium> findAllJoinStadium() throws SQLException {
+    public List<TeamWithStadium> findAllJoinStadium(Connection connection) throws SQLException {
         String query = "SELECT t.id AS team_id, t.name AS team_name, t.created_at AS team_date, " +
                 "s.id AS stadium_id, s.name AS stadium_name, s.created_at AS stadium_date\n" +
                 "FROM team AS t\n" +
@@ -108,7 +102,7 @@ public class TeamDAO {
      * @param name
      * @throws SQLException
      */
-    public void deleteByName(String name) throws SQLException {
+    public void deleteByName(Connection connection, String name) throws SQLException {
         String query = "DELETE FROM team WHERE name = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -122,7 +116,7 @@ public class TeamDAO {
      *
      * @throws SQLException
      */
-    public void deleteAll() throws SQLException {
+    public void deleteAll(Connection connection) throws SQLException {
         String query = "DELETE FROM team";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {

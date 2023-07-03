@@ -1,13 +1,21 @@
 package util;
 
+import core.ConnectionPoolManager;
+import dao.OutPlayerDAO;
+import dao.PlayerDAO;
+
 import domain.Position;
+import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
-import dto.team.TeamResponse;
+import dto.team.TeamResponseDTO;
 import model.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import service.OutPlayerService;
+
 import view.View;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +26,7 @@ class ResponseDTOPrinterTest {
     @Test
     void printResponseDTO() {
         //given
-        TeamResponse teamResponse = TeamResponse.builder()
+        TeamResponseDTO teamResponse = TeamResponseDTO.builder()
                 .id(1L)
                 .name("롯데")
                 .stadiumId(1L)
@@ -72,6 +80,18 @@ class ResponseDTOPrinterTest {
 
         //then
         //check console
+    }
+
+    @DisplayName("퇴출목록 print")
+    @Test
+    public void printOutPlayers() throws SQLException {
+        PlayerDAO playerDAO = new PlayerDAO();
+        OutPlayerDAO outPlayerDAO = new OutPlayerDAO();
+
+        OutPlayerService outPlayerService = new OutPlayerService(ConnectionPoolManager.getInstance(), outPlayerDAO, playerDAO);
+        List<OutPlayerDTO.FindOutPlayerResponse> responses = outPlayerService.findOutPlayers();
+        View.printResponse(responses);
+
     }
 
     @DisplayName("Pivot table print test")

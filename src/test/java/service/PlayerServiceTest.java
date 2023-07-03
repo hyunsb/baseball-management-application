@@ -1,13 +1,13 @@
 package service;
 
+import core.ConnectionPoolManager;
 import dao.PlayerDAO;
 import dao.StadiumDAO;
 import dao.TeamDAO;
-import db.DBConnection;
 import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
-import dto.team.TeamRequest;
+import dto.team.TeamRequestDTO;
 import exception.PlayerRegistrationFailureException;
 import org.junit.jupiter.api.*;
 import view.View;
@@ -19,29 +19,31 @@ import java.util.List;
 
 class PlayerServiceTest {
 
-    private static final Connection connection = DBConnection.getInstance();
-    private static final PlayerDAO playerDao = new PlayerDAO(connection);
-    private static final PlayerService playerService = new PlayerService(playerDao);
+    private static final ConnectionPoolManager CONNECTION_POOL_MANAGER = ConnectionPoolManager.getInstance();
+    private static final PlayerDAO playerDao = new PlayerDAO();
+    private static final TeamDAO teamDAO = new TeamDAO();
+    private static final StadiumDAO stadiumDAO = new StadiumDAO();
 
-    private static final TeamDAO teamDAO = new TeamDAO(connection);
-    private static final StadiumDAO stadiumDAO = new StadiumDAO(connection);
-    private static final TeamService teamService = new TeamService(teamDAO, stadiumDAO);
+    private static final PlayerService playerService = new PlayerService(CONNECTION_POOL_MANAGER, playerDao);
+    private static final TeamService teamService = new TeamService(CONNECTION_POOL_MANAGER, teamDAO, stadiumDAO);
 
     @BeforeEach
     void setUp() throws SQLException {
+        Connection connection = CONNECTION_POOL_MANAGER.getConnection();
         connection.prepareStatement(Sql.PLAYER.getCreate()).execute();
         connection.prepareStatement(Sql.TEAM.getCreate()).execute();
     }
 
     @AfterEach
     void cleanUP() throws SQLException {
+        Connection connection = CONNECTION_POOL_MANAGER.getConnection();
         connection.prepareStatement(Sql.PLAYER.getDrop()).execute();
         connection.prepareStatement(Sql.TEAM.getDrop()).execute();
     }
 
     @DisplayName("선수 등록 성공")
     @Test
-    void save_success_test() {
+    void save_success_test() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest = new PlayerDTO.NewPlayerRequest(1L, "나포수", Position.valueOf("C").getValue());
 
@@ -54,7 +56,7 @@ class PlayerServiceTest {
 
     @DisplayName("선수 등록 성공 - 다른 팀 같은 포지션")
     @Test
-    void save_success_test_differentTeam_same_position() {
+    void save_success_test_differentTeam_same_position() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest1 = new PlayerDTO.NewPlayerRequest(1L, "1팀포수", Position.valueOf("C").getValue());
         PlayerDTO.NewPlayerRequest playerRequest2 = new PlayerDTO.NewPlayerRequest(2L, "2팀포수", Position.valueOf("C").getValue());
@@ -71,7 +73,7 @@ class PlayerServiceTest {
 
     @DisplayName("선수 등록 실패 - 중복 선수")
     @Test
-    void save_fail_test_same_player() {
+    void save_fail_test_same_player() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
@@ -89,7 +91,7 @@ class PlayerServiceTest {
 
     @DisplayName("선수 등록 실패 - 중복 포지션")
     @Test
-    void save_fail_test_same_position() {
+    void save_fail_test_same_position() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
@@ -126,12 +128,12 @@ class PlayerServiceTest {
         playerService.update(new PlayerDTO.UpdatePlayerTeamIdForOutRequest(1L));
 
         //then
-        Assertions.assertEquals(-1, playerDao.findById(1L).get().getTeamId());
+        Assertions.assertEquals(-1, playerDao.findById(CONNECTION_POOL_MANAGER.getConnection(), 1L).get().getTeamId());
     }
 
     @DisplayName("팀별 선수 목록 성공")
     @Test
-    void findByTeam_success_test() {
+    void findByTeam_success_test() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
@@ -173,7 +175,7 @@ class PlayerServiceTest {
 
     @DisplayName("포지션 별 선수 페이지 성공 테스트")
     @Test
-    void findPlayerGroupByPosition() {
+    void findPlayerGroupByPosition() throws SQLException {
         //given
         PlayerDTO.NewPlayerRequest playerRequest1 = PlayerDTO.NewPlayerRequest.builder()
                 .teamId(1L)
@@ -197,8 +199,8 @@ class PlayerServiceTest {
         playerService.save(playerRequest2);
         playerService.save(playerRequest3);
 
-        TeamRequest teamRequest1 = new TeamRequest("TeamA", 1L);
-        TeamRequest teamRequest2 = new TeamRequest("TeamB", 2L);
+        TeamRequestDTO teamRequest1 = new TeamRequestDTO("TeamA", 1L);
+        TeamRequestDTO teamRequest2 = new TeamRequestDTO("TeamB", 2L);
 
         teamService.save(teamRequest1);
         teamService.save(teamRequest2);

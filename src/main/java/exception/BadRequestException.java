@@ -3,7 +3,7 @@ package exception;
 public class BadRequestException extends RuntimeException {
 
     public BadRequestException() {
-        super("[BAD REQUEST] 요청 형식이 올바르지 않습니다.");
+        super("[BAD REQUEST] " + ErrorMessage.BAD_REQUEST);
     }
 
     public BadRequestException(String message) {

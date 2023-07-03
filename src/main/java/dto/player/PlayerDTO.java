@@ -2,7 +2,10 @@ package dto.player;
 
 import domain.Request;
 import exception.BadRequestException;
-import lombok.*;
+import exception.ErrorMessage;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import model.Player;
 
 import java.util.ArrayList;
@@ -14,6 +17,27 @@ public class PlayerDTO {
 
     private PlayerDTO() {
         throw new IllegalStateException("Class for make Nested Dto");
+    }
+
+    private static void validateBody(Map<String, String> body, List<String> keys) throws BadRequestException {
+        if (Objects.isNull(body))
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_DATA);
+
+        if (body.size() != 2) {
+            for (String key : keys) {
+                if (!body.containsKey(key)) {
+                    throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
+                }
+            }
+        }
+    }
+
+    private static Long convertStringToLong(String teamId) throws BadRequestException {
+        try {
+            return Long.parseLong(teamId);
+        } catch (NumberFormatException exception) {
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
+        }
     }
 
     @Getter
@@ -42,13 +66,12 @@ public class PlayerDTO {
         }
     }
 
-
-
     @Getter
     @RequiredArgsConstructor
     public static class FindPlayersByTeamRequest {
 
         private final Long teamId;
+
         public static PlayerDTO.FindPlayersByTeamRequest from(Request request) throws BadRequestException {
             Map<String, String> body = request.getBody();
 
@@ -78,27 +101,6 @@ public class PlayerDTO {
             Long id = convertStringToLong(body.get("id"));
 
             return new PlayerDTO.UpdatePlayerTeamIdForOutRequest(id);
-        }
-    }
-
-    private static void validateBody(Map<String, String> body, List<String> keys) throws BadRequestException {
-        if (Objects.isNull(body))
-            throw new BadRequestException("요청에 필요한 데이터가 존재하지 않습니다.");
-
-        if (body.size() != 2) {
-            for (String key : keys) {
-                if(!body.containsKey(key)){
-                    throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
-                }
-            }
-        }
-    }
-
-    private static Long convertStringToLong(String teamId) throws BadRequestException {
-        try {
-            return Long.parseLong(teamId);
-        } catch (NumberFormatException exception) {
-            throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
         }
     }
 

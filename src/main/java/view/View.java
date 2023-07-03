@@ -161,10 +161,14 @@ public class View {
             for (int i = 0; i < fieldNames.size(); i++) {
                 int maxWidth = fieldNames.get(i).length();
                 for (Object object : valueList) {
-                    String value = getFieldValues(object, fieldNames).get(i).toString();
-                    int length = value.length();
-                    int unicodeLength = value.codePointCount(0, length);
-                    maxWidth = Math.max(maxWidth, unicodeLength);
+                    try {
+                        String value = getFieldValues(object, fieldNames).get(i).toString();
+                        int length = value.length();
+                        int unicodeLength = value.codePointCount(0, length);
+                        maxWidth = Math.max(maxWidth, unicodeLength);
+                    } catch (Exception exception) {
+                        //maxWidth = 10;
+                    }
                 }
                 columnWidths[i] = maxWidth;
             }
@@ -214,7 +218,11 @@ public class View {
             char space;
             for (int i = 0; i < values.size(); i++) {
                 space = ' ';
-                String value = values.get(i).toString();
+                Object obj = values.get(i);
+                String value = " ";
+                if (obj != null) {
+                    value = values.get(i).toString();
+                }
 
                 int padding = Math.max(0, columnWidths[i] - value.length());
                 //if value contains korean replace space as unicode 2005 (quarter size space) to match alphabet letter width

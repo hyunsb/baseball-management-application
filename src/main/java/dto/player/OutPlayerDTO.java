@@ -2,10 +2,13 @@ package dto.player;
 
 import domain.Request;
 import exception.BadRequestException;
+import exception.ErrorMessage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import model.OutPlayer;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,27 @@ public class OutPlayerDTO {
 
     private OutPlayerDTO() {
         throw new IllegalStateException("Class for make Nested Dto");
+    }
+
+    private static void validateBody(Map<String, String> body, List<String> keys) throws BadRequestException {
+        if (Objects.isNull(body))
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_DATA);
+
+        if (body.size() != 2) {
+            for (String key : keys) {
+                if (!body.containsKey(key)) {
+                    throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
+                }
+            }
+        }
+    }
+
+    private static Long convertStringToLong(String playerId) throws BadRequestException {
+        try {
+            return Long.parseLong(playerId);
+        } catch (NumberFormatException exception) {
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
+        }
     }
 
     @Getter
@@ -39,29 +63,6 @@ public class OutPlayerDTO {
         }
     }
 
-
-
-    private static void validateBody(Map<String, String> body, List<String> keys) throws BadRequestException {
-        if (Objects.isNull(body))
-            throw new BadRequestException("요청에 필요한 데이터가 존재하지 않습니다.");
-
-        if (body.size() != 2) {
-            for (String key : keys) {
-                if(!body.containsKey(key)){
-                    throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
-                }
-            }
-        }
-    }
-
-    private static Long convertStringToLong(String playerId) throws BadRequestException {
-        try {
-            return Long.parseLong(playerId);
-        } catch (NumberFormatException exception) {
-            throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
-        }
-    }
-
     @Getter
     @Builder
     public static class FindOutPlayerResponse {
@@ -69,17 +70,28 @@ public class OutPlayerDTO {
         private final Long playerId;
         private final String name;
         private final String position;
-        private final String reason;
-        private final Timestamp outDay;
+        @Setter
+        private String reason;
+        @Setter
+        private Timestamp outDay;
 
         public static FindOutPlayerResponse from(OutPlayer outPlayer) {
-            return FindOutPlayerResponse.builder()
+            FindOutPlayerResponseBuilder findOutPlayerResponseBuilder = FindOutPlayerResponse.builder()
                     .playerId(outPlayer.getPlayerId())
                     .name(outPlayer.getName())
-                    .position(outPlayer.getPosition().getValue())
-                    .reason(outPlayer.getReason().getValue())
-                    .outDay(outPlayer.getOutDay())
-                    .build();
+                    .position(outPlayer.getPosition().getValue());
+
+            try {
+                if (outPlayer.getReason().getValue() != null) {
+                    findOutPlayerResponseBuilder
+                            .reason(outPlayer.getReason().getValue())
+                            .outDay(outPlayer.getOutDay());
+                }
+
+            } catch (Exception exception) {
+
+            }
+            return findOutPlayerResponseBuilder.build();
         }
     }
 }
