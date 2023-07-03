@@ -9,6 +9,7 @@ public class ErrorMessage {
 
     // DB Connection
     public static final String INVALID_DB_CONNECTION = "DB 연결 정보가 올바르지 않습니다.";
+    public static final String RE_TRY_DB_CONNECTION = "초 후 다시 시도 합니다.";
     public static final String CONNECTION_POOL_IS_FULL = "커넥션 풀이 가득 찼습니다, 새로운 커넥션을 만들 수 없습니다.";
 
     // DB Service

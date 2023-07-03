@@ -3,11 +3,9 @@ import domain.Request;
 import exception.BadRequestException;
 import exception.DBConnectException;
 import exception.RollbackException;
-import exception.ServiceFailureException;
 import view.View;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
@@ -21,6 +19,11 @@ public class Main {
 
             } catch (InvocationTargetException exception) {
                 View.printErrorMessage(exception.getTargetException().getMessage());
+                if (exception.getTargetException() instanceof DBConnectException) {
+                    break;
+                }
+            }  catch (BadRequestException exception) {
+                View.printErrorMessage(exception.getMessage());
 
             } catch (DBConnectException exception) {
                 View.printErrorMessage(exception.getMessage());
