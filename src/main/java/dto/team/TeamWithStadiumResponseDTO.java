@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-public class TeamWithStadiumResponse {
+public class TeamWithStadiumResponseDTO {
 
     private Long teamId;
     private String teamName;
@@ -19,8 +19,8 @@ public class TeamWithStadiumResponse {
     private Timestamp stadiumCreatedAt;
 
 
-    public static TeamWithStadiumResponse from(TeamWithStadium teamWithStadium) {
-        return TeamWithStadiumResponse.builder()
+    public static TeamWithStadiumResponseDTO from(TeamWithStadium teamWithStadium) {
+        return TeamWithStadiumResponseDTO.builder()
                 .teamId(teamWithStadium.getTeamId())
                 .teamName(teamWithStadium.getTeamName())
                 .teamCreatedAt(teamWithStadium.getTeamCreatedAt())

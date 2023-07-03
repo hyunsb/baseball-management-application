@@ -7,7 +7,7 @@ import dao.TeamDAO;
 import db.Sql;
 import domain.Position;
 import dto.player.PlayerDTO;
-import dto.team.TeamRequest;
+import dto.team.TeamRequestDTO;
 import exception.PlayerRegistrationFailureException;
 import org.junit.jupiter.api.*;
 import view.View;
@@ -199,8 +199,8 @@ class PlayerServiceTest {
         playerService.save(playerRequest2);
         playerService.save(playerRequest3);
 
-        TeamRequest teamRequest1 = new TeamRequest("TeamA", 1L);
-        TeamRequest teamRequest2 = new TeamRequest("TeamB", 2L);
+        TeamRequestDTO teamRequest1 = new TeamRequestDTO("TeamA", 1L);
+        TeamRequestDTO teamRequest2 = new TeamRequestDTO("TeamB", 2L);
 
         teamService.save(teamRequest1);
         teamService.save(teamRequest2);

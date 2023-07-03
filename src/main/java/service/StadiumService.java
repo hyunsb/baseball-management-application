@@ -2,8 +2,8 @@ package service;
 
 import core.ConnectionPoolManager;
 import dao.StadiumDAO;
-import dto.stadium.StadiumRequest;
-import dto.stadium.StadiumResponse;
+import dto.stadium.StadiumRequestDTO;
+import dto.stadium.StadiumResponseDTO;
 import exception.ErrorMessage;
 import exception.StadiumFindFailureException;
 import exception.StadiumRegistrationFailureException;
@@ -23,7 +23,7 @@ public class StadiumService {
     private final StadiumDAO stadiumDAO;
 
     // 야구장 저장
-    public StadiumResponse save(StadiumRequest request) throws IllegalArgumentException {
+    public StadiumResponseDTO save(StadiumRequestDTO request) throws IllegalArgumentException {
         Connection connection = connectionPoolManager.getConnection();
         String name = request.getName();
         Optional<Stadium> stadium;
@@ -35,17 +35,17 @@ public class StadiumService {
         } finally {
             connectionPoolManager.releaseConnection(connection);
         }
-        return StadiumResponse.from(stadium.orElseThrow(() ->
+        return StadiumResponseDTO.from(stadium.orElseThrow(() ->
                 new StadiumRegistrationFailureException(ErrorMessage.FAILED_STADIUM_FIND)));
     }
 
     // 전체 야구장 검색
-    public List<StadiumResponse> findAll() throws StadiumFindFailureException {
+    public List<StadiumResponseDTO> findAll() throws StadiumFindFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             List<Stadium> stadiums = stadiumDAO.findAll(connection);
             return stadiums.stream()
-                    .map(StadiumResponse::from)
+                    .map(StadiumResponseDTO::from)
                     .collect(Collectors.toList());
 
         } catch (SQLException exception) {
@@ -56,7 +56,7 @@ public class StadiumService {
     }
 
     // 야구장 이름으로 검색
-    public StadiumResponse findByName(StadiumRequest request) throws StadiumFindFailureException {
+    public StadiumResponseDTO findByName(StadiumRequestDTO request) throws StadiumFindFailureException {
         Connection connection = connectionPoolManager.getConnection();
         String name = request.getName();
         Optional<Stadium> result;
@@ -69,7 +69,7 @@ public class StadiumService {
             connectionPoolManager.releaseConnection(connection);
         }
 
-        return StadiumResponse.from(result.orElseThrow(() ->
+        return StadiumResponseDTO.from(result.orElseThrow(() ->
                 new StadiumFindFailureException(ErrorMessage.FAILED_STADIUM_FIND)));
     }
 }

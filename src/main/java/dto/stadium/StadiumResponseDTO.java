@@ -7,14 +7,14 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-public class StadiumResponse {
+public class StadiumResponseDTO {
 
     private Long id;
     private String name;
     private Timestamp createAt;
 
-    public static StadiumResponse from(Stadium stadium) {
-        return StadiumResponse.builder()
+    public static StadiumResponseDTO from(Stadium stadium) {
+        return StadiumResponseDTO.builder()
                 .id(stadium.getId())
                 .name(stadium.getName())
                 .createAt(stadium.getCreatedAt())

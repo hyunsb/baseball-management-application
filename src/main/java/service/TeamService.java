@@ -3,9 +3,9 @@ package service;
 import core.ConnectionPoolManager;
 import dao.StadiumDAO;
 import dao.TeamDAO;
-import dto.team.TeamRequest;
-import dto.team.TeamResponse;
-import dto.team.TeamWithStadiumResponse;
+import dto.team.TeamRequestDTO;
+import dto.team.TeamResponseDTO;
+import dto.team.TeamWithStadiumResponseDTO;
 import exception.ErrorMessage;
 import exception.TeamFindFailureException;
 import exception.TeamRegistrationFailureException;
@@ -26,7 +26,7 @@ public class TeamService {
     private final TeamDAO teamDAO;
     private final StadiumDAO stadiumDAO;
 
-    public TeamResponse save(TeamRequest request) throws TeamRegistrationFailureException {
+    public TeamResponseDTO save(TeamRequestDTO request) throws TeamRegistrationFailureException {
         Connection connection = connectionPoolManager.getConnection();
         Optional<Team> result;
         String name = request.getName();
@@ -42,7 +42,7 @@ public class TeamService {
             connectionPoolManager.releaseConnection(connection);
         }
 
-        return TeamResponse.from(result.orElseThrow(() ->
+        return TeamResponseDTO.from(result.orElseThrow(() ->
                 new TeamRegistrationFailureException(ErrorMessage.FAILED_TEAM_FIND)));
     }
 
@@ -57,12 +57,12 @@ public class TeamService {
         }
     }
 
-    public List<TeamWithStadiumResponse> findAllWithStadium() throws TeamFindFailureException {
+    public List<TeamWithStadiumResponseDTO> findAllWithStadium() throws TeamFindFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             List<TeamWithStadium> result = teamDAO.findAllJoinStadium(connection);
             return result.stream()
-                    .map(TeamWithStadiumResponse::from)
+                    .map(TeamWithStadiumResponseDTO::from)
                     .collect(Collectors.toList());
 
         } catch (SQLException exception) {
@@ -72,12 +72,12 @@ public class TeamService {
         }
     }
 
-    public List<TeamResponse> findAll() throws TeamFindFailureException {
+    public List<TeamResponseDTO> findAll() throws TeamFindFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             List<Team> result = teamDAO.findAll(connection);
             return result.stream()
-                    .map(TeamResponse::from)
+                    .map(TeamResponseDTO::from)
                     .collect(Collectors.toList());
 
         } catch (SQLException exception) {

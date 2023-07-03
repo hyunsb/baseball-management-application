@@ -11,14 +11,14 @@ import java.util.Objects;
 
 @Getter
 @RequiredArgsConstructor
-public class StadiumRequest {
+public class StadiumRequestDTO {
 
     private final String name;
 
-    public static StadiumRequest from(Request request) throws BadRequestException {
+    public static StadiumRequestDTO from(Request request) throws BadRequestException {
         Map<String, String> body = request.getBody();
         validateBody(body);
-        return new StadiumRequest(body.get("name"));
+        return new StadiumRequestDTO(body.get("name"));
     }
 
     private static void validateBody(Map<String, String> body) throws BadRequestException {

@@ -4,11 +4,11 @@ import core.annotation.RequestMapping;
 import domain.Request;
 import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
-import dto.stadium.StadiumRequest;
-import dto.stadium.StadiumResponse;
-import dto.team.TeamRequest;
-import dto.team.TeamResponse;
-import dto.team.TeamWithStadiumResponse;
+import dto.stadium.StadiumRequestDTO;
+import dto.stadium.StadiumResponseDTO;
+import dto.team.TeamRequestDTO;
+import dto.team.TeamResponseDTO;
+import dto.team.TeamWithStadiumResponseDTO;
 import exception.*;
 import lombok.RequiredArgsConstructor;
 import service.OutPlayerService;
@@ -33,8 +33,8 @@ public class BaseBallApp {
     public void saveStadium(final Request request)
             throws BadRequestException, StadiumRegistrationFailureException, SQLException {
 
-        StadiumRequest stadiumRequest = StadiumRequest.from(request);
-        StadiumResponse response = stadiumService.save(stadiumRequest);
+        StadiumRequestDTO stadiumRequest = StadiumRequestDTO.from(request);
+        StadiumResponseDTO response = stadiumService.save(stadiumRequest);
         View.printResponse(response);
     }
 
@@ -44,7 +44,7 @@ public class BaseBallApp {
 
         if (!Objects.isNull(request.getBody())) throw new BadRequestException();
 
-        List<StadiumResponse> allStadiums = stadiumService.findAll();
+        List<StadiumResponseDTO> allStadiums = stadiumService.findAll();
         View.printResponse(allStadiums);
     }
 
@@ -52,8 +52,8 @@ public class BaseBallApp {
     public void saveTeam(final Request request)
             throws BadRequestException, TeamRegistrationFailureException, SQLException {
 
-        TeamRequest teamRequest = TeamRequest.from(request);
-        TeamResponse response = teamService.save(teamRequest);
+        TeamRequestDTO teamRequest = TeamRequestDTO.from(request);
+        TeamResponseDTO response = teamService.save(teamRequest);
         View.printResponse(response);
     }
 
@@ -62,7 +62,7 @@ public class BaseBallApp {
             throws BadRequestException, TeamFindFailureException, SQLException {
 
         if (!Objects.isNull(request.getBody())) throw new BadRequestException();
-        List<TeamWithStadiumResponse> allTeamWithStadium = teamService.findAllWithStadium();
+        List<TeamWithStadiumResponseDTO> allTeamWithStadium = teamService.findAllWithStadium();
         View.printResponse(allTeamWithStadium);
     }
 

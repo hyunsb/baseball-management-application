@@ -2,8 +2,8 @@ package service;
 
 import core.ConnectionPoolManager;
 import dao.StadiumDAO;
-import dto.stadium.StadiumRequest;
-import dto.stadium.StadiumResponse;
+import dto.stadium.StadiumRequestDTO;
+import dto.stadium.StadiumResponseDTO;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -36,10 +36,10 @@ class StadiumServiceTest {
     void save_Success_Test() throws SQLException {
         // Given
         String expected = "Test Stadium";
-        StadiumRequest request = new StadiumRequest(expected);
+        StadiumRequestDTO request = new StadiumRequestDTO(expected);
 
         // When
-        StadiumResponse actual = STADIUM_SERVICE.save(request);
+        StadiumResponseDTO actual = STADIUM_SERVICE.save(request);
 
         // Then
         Assertions.assertEquals(expected, actual.getName());
@@ -50,7 +50,7 @@ class StadiumServiceTest {
     void save_Failed_DuplicateName_Test() throws SQLException {
         // Given
         String expected = "Test Stadium";
-        StadiumRequest request = new StadiumRequest(expected);
+        StadiumRequestDTO request = new StadiumRequestDTO(expected);
         STADIUM_SERVICE.save(request);
 
         // When
@@ -64,14 +64,14 @@ class StadiumServiceTest {
     @Test
     void findAll_Success_Test() throws SQLException {
         // Given
-        StadiumRequest request1 = new StadiumRequest("Test Stadium1");
+        StadiumRequestDTO request1 = new StadiumRequestDTO("Test Stadium1");
         STADIUM_SERVICE.save(request1);
 
-        StadiumRequest request2 = new StadiumRequest("Test Stadium2");
+        StadiumRequestDTO request2 = new StadiumRequestDTO("Test Stadium2");
         STADIUM_SERVICE.save(request2);
 
         // When
-        List<StadiumResponse> actual = STADIUM_SERVICE.findAll();
+        List<StadiumResponseDTO> actual = STADIUM_SERVICE.findAll();
 
         // Then
         Assertions.assertEquals(2, actual.size());

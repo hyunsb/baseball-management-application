@@ -10,19 +10,19 @@ import java.util.Objects;
 
 @Getter
 @RequiredArgsConstructor
-public class TeamRequest {
+public class TeamRequestDTO {
 
     private final String name;
     private final Long stadiumId;
 
-    public static TeamRequest from(Request request) throws BadRequestException {
+    public static TeamRequestDTO from(Request request) throws BadRequestException {
         Map<String, String> body = request.getBody();
         validateBody(body);
 
         String name = body.get("name");
         Long stadiumId = convertStadiumIdToLong(body.get("stadiumId"));
 
-        return new TeamRequest(name, stadiumId);
+        return new TeamRequestDTO(name, stadiumId);
     }
 
     private static void validateBody(Map<String, String> body) throws BadRequestException {
