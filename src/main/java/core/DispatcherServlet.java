@@ -25,6 +25,6 @@ public class DispatcherServlet {
                 return;
             }
         }
-        throw new BadRequestException("요청 형식이 올바르지 않습니다.");
+        throw new BadRequestException();
     }
 }

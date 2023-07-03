@@ -2,11 +2,13 @@ package dto.player;
 
 import domain.Request;
 import exception.BadRequestException;
+import exception.ErrorMessage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.OutPlayer;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,27 @@ public class OutPlayerDTO {
 
     private OutPlayerDTO() {
         throw new IllegalStateException("Class for make Nested Dto");
+    }
+
+    private static void validateBody(Map<String, String> body, List<String> keys) throws BadRequestException {
+        if (Objects.isNull(body))
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_DATA);
+
+        if (body.size() != 2) {
+            for (String key : keys) {
+                if (!body.containsKey(key)) {
+                    throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
+                }
+            }
+        }
+    }
+
+    private static Long convertStringToLong(String playerId) throws BadRequestException {
+        try {
+            return Long.parseLong(playerId);
+        } catch (NumberFormatException exception) {
+            throw new BadRequestException(ErrorMessage.INVALID_REQUEST_FORMAT);
+        }
     }
 
     @Getter
@@ -37,29 +60,6 @@ public class OutPlayerDTO {
             Long playerId = convertStringToLong(body.get("playerId"));
             String reason = body.get("reason");
             return new NewOutPlayerRequest(playerId, reason);
-        }
-    }
-
-
-
-    private static void validateBody(Map<String, String> body, List<String> keys) throws BadRequestException {
-        if (Objects.isNull(body))
-            throw new BadRequestException("요청에 필요한 데이터가 존재하지 않습니다.");
-
-        if (body.size() != 2) {
-            for (String key : keys) {
-                if(!body.containsKey(key)){
-                    throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
-                }
-            }
-        }
-    }
-
-    private static Long convertStringToLong(String playerId) throws BadRequestException {
-        try {
-            return Long.parseLong(playerId);
-        } catch (NumberFormatException exception) {
-            throw new BadRequestException("올바르지 않은 데이터 형식 입니다.");
         }
     }
 

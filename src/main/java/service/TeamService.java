@@ -3,9 +3,10 @@ package service;
 import core.ConnectionPoolManager;
 import dao.StadiumDAO;
 import dao.TeamDAO;
-import dto.team.TeamRequest;
-import dto.team.TeamResponse;
-import dto.team.TeamWithStadiumResponse;
+import dto.team.TeamRequestDTO;
+import dto.team.TeamResponseDTO;
+import dto.team.TeamWithStadiumResponseDTO;
+import exception.ErrorMessage;
 import exception.TeamFindFailureException;
 import exception.TeamRegistrationFailureException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class TeamService {
     private final TeamDAO teamDAO;
     private final StadiumDAO stadiumDAO;
 
-    public TeamResponse save(TeamRequest request) throws TeamRegistrationFailureException, SQLException {
+    public TeamResponseDTO save(TeamRequestDTO request) throws TeamRegistrationFailureException {
         Connection connection = connectionPoolManager.getConnection();
         Optional<Team> result;
         String name = request.getName();
@@ -41,27 +42,27 @@ public class TeamService {
             connectionPoolManager.releaseConnection(connection);
         }
 
-        return TeamResponse.from(result.orElseThrow(() ->
-                new TeamRegistrationFailureException("팀이 존재하지 않습니다.")));
+        return TeamResponseDTO.from(result.orElseThrow(() ->
+                new TeamRegistrationFailureException(ErrorMessage.FAILED_TEAM_FIND)));
     }
 
     private void validateStadiumId(Long stadiumId) throws SQLException, TeamRegistrationFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             if (stadiumDAO.findStadiumById(connection, stadiumId).isEmpty()) {
-                throw new TeamRegistrationFailureException(stadiumId + "야구장ID가 참조하는 야구장이 존재하지 않습니다.");
+                throw new TeamRegistrationFailureException(ErrorMessage.FAILED_TEAM_FIND);
             }
         } finally {
             connectionPoolManager.releaseConnection(connection);
         }
     }
 
-    public List<TeamWithStadiumResponse> findAllWithStadium() throws TeamFindFailureException, SQLException {
+    public List<TeamWithStadiumResponseDTO> findAllWithStadium() throws TeamFindFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             List<TeamWithStadium> result = teamDAO.findAllJoinStadium(connection);
             return result.stream()
-                    .map(TeamWithStadiumResponse::from)
+                    .map(TeamWithStadiumResponseDTO::from)
                     .collect(Collectors.toList());
 
         } catch (SQLException exception) {
@@ -71,12 +72,12 @@ public class TeamService {
         }
     }
 
-    public List<TeamResponse> findAll() throws TeamFindFailureException, SQLException {
+    public List<TeamResponseDTO> findAll() throws TeamFindFailureException {
         Connection connection = connectionPoolManager.getConnection();
         try {
             List<Team> result = teamDAO.findAll(connection);
             return result.stream()
-                    .map(TeamResponse::from)
+                    .map(TeamResponseDTO::from)
                     .collect(Collectors.toList());
 
         } catch (SQLException exception) {

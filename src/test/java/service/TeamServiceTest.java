@@ -3,9 +3,9 @@ package service;
 import core.ConnectionPoolManager;
 import dao.StadiumDAO;
 import dao.TeamDAO;
-import dto.stadium.StadiumRequest;
-import dto.team.TeamRequest;
-import dto.team.TeamResponse;
+import dto.stadium.StadiumRequestDTO;
+import dto.team.TeamRequestDTO;
+import dto.team.TeamResponseDTO;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -40,14 +40,14 @@ class TeamServiceTest {
     @Test
     void save_Success_Test() throws SQLException {
         // Given
-        STADIUM_SERVICE.save(new StadiumRequest("Test Stadium"));
+        STADIUM_SERVICE.save(new StadiumRequestDTO("Test Stadium"));
 
         String name = "test Team";
         Long stadiumId = 1L;
-        TeamRequest request = new TeamRequest(name, stadiumId);
+        TeamRequestDTO request = new TeamRequestDTO(name, stadiumId);
 
         // When
-        TeamResponse actual = TEAM_SERVICE.save(request);
+        TeamResponseDTO actual = TEAM_SERVICE.save(request);
 
         // Then
         Assertions.assertEquals(name, actual.getName());
@@ -60,7 +60,7 @@ class TeamServiceTest {
         // Given
         String name = "test Team";
         Long stadiumId = 1L;
-        TeamRequest request = new TeamRequest(name, stadiumId);
+        TeamRequestDTO request = new TeamRequestDTO(name, stadiumId);
         TEAM_SERVICE.save(request);
 
         // When
@@ -74,17 +74,17 @@ class TeamServiceTest {
         // Given
         String name1 = "test Team1";
         Long stadiumId1 = 1L;
-        TeamRequest request1 = new TeamRequest(name1, stadiumId1);
+        TeamRequestDTO request1 = new TeamRequestDTO(name1, stadiumId1);
 
         String name2 = "test Team2";
         Long stadiumId2 = 1L;
-        TeamRequest request2 = new TeamRequest(name2, stadiumId2);
+        TeamRequestDTO request2 = new TeamRequestDTO(name2, stadiumId2);
 
         TEAM_SERVICE.save(request1);
         TEAM_SERVICE.save(request2);
 
         // When
-        List<TeamResponse> actual = TEAM_SERVICE.findAll();
+        List<TeamResponseDTO> actual = TEAM_SERVICE.findAll();
 
         // Then
         Assertions.assertEquals(2, actual.size());

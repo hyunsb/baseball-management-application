@@ -4,11 +4,10 @@ import core.ConnectionPoolManager;
 import dao.OutPlayerDAO;
 import dao.PlayerDAO;
 
-import db.DBConnection;
 import domain.Position;
 import dto.player.OutPlayerDTO;
 import dto.player.PlayerDTO;
-import dto.team.TeamResponse;
+import dto.team.TeamResponseDTO;
 import model.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import service.OutPlayerService;
 
 import view.View;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ class ResponseDTOPrinterTest {
     @Test
     void printResponseDTO() {
         //given
-        TeamResponse teamResponse = TeamResponse.builder()
+        TeamResponseDTO teamResponse = TeamResponseDTO.builder()
                 .id(1L)
                 .name("롯데")
                 .stadiumId(1L)
