@@ -22,6 +22,7 @@
   - `Main`: 어노테이션과 리플렉션을 통해 요청과 실행 메서드를 매핑하도록 구현
   - `RequestParser`: 쿼리스트링 요청 형식 검증을 진행하고 각 요청에 세부작인 데이터 검증은 해당 객체에서 진행하도록 구현
   - `Console`: Scanner를 싱글톤으로 관리하고 애플리케이션에 필요한 메서드만 노출시키도록 구현
+  - 프로젝트 core (ConnectionPoolManager, DispatcherServlet)
 - 야구장(Stadium) 관련 기능 구현(등록, 전체목록)
 - 팀(Team) 관련 기능 구현(등록, 전체목록)
 
