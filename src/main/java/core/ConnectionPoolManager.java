@@ -46,7 +46,15 @@ public class ConnectionPoolManager {
             connectionPool.add(createConnection());
         }
 
-        final Connection connection = connectionPool.remove(connectionPool.size() - 1);
+        Connection connection = connectionPool.remove(connectionPool.size() - 1);
+        try {
+            if (!connection.isValid(5)) {
+                connection.close();
+                connection = updateConnection();
+            }
+        } catch (SQLException exception) {
+            throw new DBConnectException(ErrorMessage.INVALID_DB_CONNECTION);
+        }
         usedConnections.add(connection);
         return connection;
     }
@@ -61,6 +69,10 @@ public class ConnectionPoolManager {
                 DBConnectConfig.USER_NAME.value(),
                 DBConnectConfig.PASSWORD.value(),
                 DBConnectConfig.DRIVER.value());
+    }
+
+    private Connection updateConnection() throws DBConnectException {
+        return createConnection();
     }
 
     public boolean releaseConnection(Connection connection) {
